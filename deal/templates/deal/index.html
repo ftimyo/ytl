@@ -1,0 +1,15 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Younger Than Look</title>
+</head>
+
+</html>
+<body>
+<ul>
+	{% for dish in dishes %}
+	<li>{{dish.zhtitle}}</li>
+	{% endfor %}
+</ul>
+</body>
