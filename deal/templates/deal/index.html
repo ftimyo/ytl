@@ -7,9 +7,31 @@
 
 </html>
 <body>
-<ul>
-	{% for dish in dishes %}
-	<li>{{dish.zhtitle}}</li>
-	{% endfor %}
-</ul>
+<form action="GET">
+	<select name="sort" onchange="ShowSortOptions(this.value)">
+		<option value="phl">Price: Low to High</option>
+		<option value="plh">Price: High to Low</option>
+	</select>
+</form>
+<br/>
+<div id="txtHint">Meal info will be listed here...</div>
+
+<script>
+function ShowSortOptions(str) {
+  var xhttp;
+  if (str == "") {
+    document.getElementById("txtHint").innerHTML = "";
+    return;
+  }
+  xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      document.getElementById("txtHint").innerHTML = xhttp.responseText;
+    }
+  };
+	xhttp.open("GET", "{% url 'deal:meallist' %}?sort="+str, true);
+  xhttp.send();
+}
+</script>
+
 </body>
