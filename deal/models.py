@@ -6,6 +6,21 @@ import hashlib
 import datetime
 import os
 
+class MealCatalog(models.Model):
+    name = models.CharField('類別名稱', max_length=100, help_text='限50字')
+    desc = RedactorField(verbose_name='類別描述', redactor_options={'focus': 'true'},
+            allow_file_upload=False, allow_image_upload=False,
+            blank = True, null =True)
+    owner = models.ForeignKey(User, verbose_name='發布者', editable=False)
+    pub_time = models.DateTimeField('發布時間', auto_now_add=True)
+    update_time = models.DateTimeField('修改時間', auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ('name',)
+
 def rename_photoid(instance, filename):
     h = instance.md5sum
     basename, ext = os.path.splitext(filename)
@@ -21,11 +36,16 @@ def rename_photoid(instance, filename):
 
 # Create your models here.
 class Meal(models.Model):
-    zhtitle = models.CharField('中文名', max_length=100, help_text='限50字')
+    zhtitle = models.CharField('中文名', max_length=100, unique = True, help_text='限50字')
     entitle = models.CharField('英文名', max_length=100,
             help_text='限50字',blank=True,null=True)
     desc = RedactorField(verbose_name='菜品描述', redactor_options={'focus': 'true'},
             allow_file_upload=False, allow_image_upload=False)
+
+    doptions = zip(range(0,3), ['隱藏', '顯示', '推薦'])
+    display = models.IntegerField('顯示狀態', default = 0, choices=doptions,
+            help_text =
+            '隱藏:不會在前端顯示; 顯示:在菜單中顯示; 推薦:在菜單和推薦中顯示;')
     ingredient = RedactorField(verbose_name='配料', redactor_options={'focus': 'true'},
             allow_file_upload=False, allow_image_upload=False)
     cal = models.IntegerField('熱量', help_text='輸入整數', blank=True,null=True)
@@ -35,6 +55,8 @@ class Meal(models.Model):
             max_digits=5,decimal_places=2,blank=True,null=True)
     unit = models.CharField('價格單位', max_length=10,
             help_text='限10字',blank=True,null=True)
+    catalog = models.ManyToManyField(MealCatalog, verbose_name = "類別",
+            related_name = 'catalog', blank = True)
 
     owner = models.ForeignKey(User, verbose_name='發布者', editable=False)
     pub_time = models.DateTimeField('發布時間', auto_now_add=True)
@@ -72,6 +94,7 @@ class MealPhoto(models.Model):
     image = models.ImageField(verbose_name = '相片文件', upload_to=rename_mealphoto)
     dish = models.ForeignKey(Meal, verbose_name='菜品', editable=False)
     pub_time = models.DateTimeField('發布時間', auto_now_add=True)
+    update_time = models.DateTimeField('修改時間', auto_now=True)
     md5sum = models.CharField(max_length=36, editable=False)
 
     class Meta:
@@ -107,3 +130,5 @@ class MealPhoto(models.Model):
         return self.name
     def __str__(self):
         return self.name
+    class Meta:
+        ordering = ('-pub_time',)
