@@ -41,7 +41,7 @@ class MealAdmin(admin.ModelAdmin):
                 {'fields' : ('photoid',)}),
             ]
 
-    list_display = ('pub_time','zhtitle', 'owner','price','unit','admin_image','update_time')
+    list_display = ('zhtitle', 'display', 'owner','price','unit','admin_image','update_time','pub_time',)
 
     inlines = [
             MealPhotoInline,
