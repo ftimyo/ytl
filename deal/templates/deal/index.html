@@ -1,37 +1,25 @@
-{% load staticfiles %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <title>Younger Than Look</title>
-</head>
+{%extends "deal/base.html"%}
+{%block title%}水餃皇后{%endblock%}
 
-</html>
-<body>
+{%block content%}
+
 <form action="GET">
-	<select name="sort" onchange="ShowSortOptions(this.value)">
-		<option value="phl">Price: Low to High</option>
-		<option value="plh">Price: High to Low</option>
+	<label for="catalog">排序:</label>
+	<select name="sort" id="sort" onchange="ShowSortOptions('{% url 'deal:meallist' %}')">
+		<option value="plh">價格: 由低到高</option>
+		<option value="phl">價格: 由高到低</option>
 	</select>
+
+	<label for="catalog">類別:</label>
+	<select name="catalog" id="catalog" onchange="ShowSortOptions('{% url 'deal:meallist' %}')">
+		{% for ent in catalog %}
+		<option value={{ent.id}}>{{ent.name}}</option>
+		{% endfor %}
+		<option value=-1 selected>全部分類</option>
+	</select>
+
 </form>
 <br/>
 <div id="txtHint">Meal info will be listed here...</div>
 
-<script>
-function ShowSortOptions(str) {
-  var xhttp;
-  if (str == "") {
-    document.getElementById("txtHint").innerHTML = "";
-    return;
-  }
-  xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-    if (xhttp.readyState == 4 && xhttp.status == 200) {
-      document.getElementById("txtHint").innerHTML += xhttp.responseText;
-    }
-  };
-	xhttp.open("GET", "{% url 'deal:meallist' %}?sort="+str, true);
-  xhttp.send();
-}
-</script>
-
-</body>
+{%endblock%}

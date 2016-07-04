@@ -7,7 +7,7 @@ import datetime
 import os
 
 class MealCatalog(models.Model):
-    name = models.CharField('類別名稱', max_length=100, help_text='限50字')
+    name = models.CharField('類別名稱', unique = True, max_length=100, help_text='限50字')
     desc = RedactorField(verbose_name='類別描述', redactor_options={'focus': 'true'},
             allow_file_upload=False, allow_image_upload=False,
             blank = True, null =True)

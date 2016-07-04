@@ -1,12 +1,24 @@
+import json
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Meal, MealPhoto
+from .models import Meal, MealPhoto, MealCatalog
 
 # Create your views here.
 
 def index(request):
-    context = dict()
+    catalog = MealCatalog.objects.all()
+    context = {'catalog':catalog}
     return render(request, 'deal/index.html', context)
+
+def meallistJSON(dishes):
+    dishlist = []
+    for dish in dishes:
+        zhtitle = dish.zhtitle
+        entry = {'zhtitle':zhtitle}
+        dishlist.append(entry)
+    dishlistres = {'dishlist':dishlist}
+    return dishlistres
 
 def meallist(request):
     dishes = Meal.objects.all()
@@ -17,10 +29,11 @@ def meallist(request):
     else:
         dishes = dishes.order_by('price')
 
-    context = {'dishes':dishes,}
+    context = meallistJSON(dishes)
+    return JsonResponse(context)
 
+    '''
+    context = {'dishes':dishes}
     return render(request, 'deal/meallist.html', context)
     '''
-    sort = request.POST.get('sort')
-    return HttpResponse("success!" + sort)
-    '''
+
