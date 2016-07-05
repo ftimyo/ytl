@@ -1,4 +1,4 @@
-function NewContentObjects(dishes) {
+function NewContentObjects(dishes, anima) {
 	var content = document.getElementById("content");
 	content.innerHTML = "";
 	var row;
@@ -9,7 +9,7 @@ function NewContentObjects(dishes) {
 			content.appendChild(row);
 		}
 		var col = document.createElement("div");
-		col.className = "w3-third";
+		col.className = "w3-third " + anima;
 		row.appendChild(col);
 		var card = document.createElement("div");
 		card.className = "w3-card-4";
@@ -46,7 +46,7 @@ function NewContentObjects(dishes) {
 	}
 }
 
-function ShowSortOptions(server) {
+function ShowSortOptions(server, anima) {
 	sort = document.getElementById("sort").value;
 	cat = document.getElementById("catalog").value;
   var xhttp;
@@ -57,7 +57,7 @@ function ShowSortOptions(server) {
   xhttp.onreadystatechange = function() {
     if (xhttp.readyState == 4 && xhttp.status == 200) {
 			var dishes = JSON.parse(xhttp.responseText).dishlist;
-			NewContentObjects(dishes);
+			NewContentObjects(dishes, anima);
     }
   };
 	xhttp.open("GET", server+'?sort='+sort+'&cat='+cat, true);
