@@ -8,7 +8,7 @@
 	<div class="form-group">
 	<label for="catalog">排序:</label>
 	<select class="form-control" name="sort" id="sort"
-		onchange="ShowSortOptions('{% url 'deal:meallist' %}', 'w3-animate-right')">
+		onchange="ShowSortOptions('{% url 'deal:meallist' %}', 'w3-animate-left')">
 		<option value="plh">價格: 由低到高</option>
 		<option value="phl">價格: 由高到低</option>
 	</select>
@@ -17,7 +17,7 @@
 	<div class="form-group">
 	<label for="catalog">類別:</label>
 	<select class="form-control"  name="catalog" id="catalog"
-		onchange="ShowSortOptions('{% url 'deal:meallist' %}', 'w3-animate-opacity')">
+		onchange="ShowSortOptions('{% url 'deal:meallist' %}', 'w3-animate-zoom')">
 		<option value=-1 selected>全部分類</option>
 		{% for ent in catalog %}
 		<option value={{ent.id}}>{{ent.name}}</option>
@@ -27,7 +27,7 @@
 
 </form>
 
-<div id="content" class="container" style="max-width:1100px;margin-top:80px;margin-bottom:80px"> 
+<div id="content" class="container">
 </div>
 
 {%endblock%}
@@ -35,3 +35,4 @@
 {%block loadbody%}
 onload = "ShowSortOptions('{% url 'deal:meallist' %}', 'w3-animate-zoom')"
 {%endblock%}
+{%block lnavmenu%}class="active"{%endblock%}

@@ -24,17 +24,17 @@
     </div>
 		<div class="collapse navbar-collapse" id="myNavbar">
     <ul class="nav navbar-nav">
-			<li><a href="javascript:void(0)">精品推薦</a></li>
-			<li><a href="javascript:void(0)">菜單</a></li>
-			<li><a href="javascript:void(0)">關於我們</a></li>
-			<li><a href="javascript:void(0)">聯繫我們</a></li>
+			<li {%block lnavhome%}{%endblock%}><a {%block navhome%}href="#"{%endblock%}>精品推薦</a></li>
+			<li {%block lnavmenu%}{%endblock%}><a {%block navmenu%}href="#"{%endblock%}>菜單</a></li>
+			<li {%block lnavabout%}{%endblock%}><a {%block navabout%}href="#"{%endblock%}>關於我們</a></li>
+			<li {%block lnavcontact%}{%endblock%}><a {%block navcontact%}href="#"{%endblock%}>聯繫我們</a></li>
     </ul>
 		</div>
   </div>
 </nav>
 
 
-<div class="container" style="max-width:1100px;margin-top:80px;margin-bottom:80px">
+<div id = "window" class="container" style="max-width:1100px;margin-top:80px;margin-bottom:80px">
 {%block content%}
 {%endblock%}
 </div>

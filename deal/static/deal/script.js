@@ -12,7 +12,7 @@ function NewContentObjects(dishes, anima) {
 		col.className = "w3-third " + anima;
 		row.appendChild(col);
 		var card = document.createElement("div");
-		card.className = "w3-card-4";
+		card.className = "w3-card-8";
 		var img = document.createElement("img");
 		img.src = dishes[i].photoid;
 		img.alt = dishes[i].zhtitle;
@@ -44,6 +44,55 @@ function NewContentObjects(dishes, anima) {
 		card.appendChild(img);
 		card.appendChild(text);
 	}
+}
+
+function ShowIndexContent(recommend, anima) {
+	var win = document.getElementById("window");
+	win.innerHTML = "";
+	for (var i in recommend) {
+		var sec = document.createElement("div");
+		sec.className = "w3-section w3-container " + anima;
+		var card = document.createElement("div");
+		card.className = "w3-card-4";
+		sec.appendChild(card);
+		var img = document.createElement("img");
+		img.src = recommend[i].photoid;
+		img.alt = recommend[i].zhtitle;
+		img.style = "width:100%";
+
+		var text = document.createElement("div");
+		text.className = "w3-container w3-white";
+
+		var title = document.createElement("h4");
+		title.innerHTML = recommend[i].zhtitle + ' ' + recommend[i].entitle;
+		var priceinfo = document.createElement("h4");
+		priceinfo.innerHTML = 'CDN$ ' + recommend[i].price + recommend[i].punit;
+		var itemid = document.createElement("p");
+		itemid.innerHTML = "<strong>餐品編號:</strong> " + recommend[i].itemid;
+		var desp = document.createElement("p");
+		desp.innerHTML = recommend[i].desp;
+
+		text.appendChild(title);
+		text.appendChild(priceinfo);
+		text.appendChild(itemid);
+		text.appendChild(desp);
+		card.appendChild(img);
+		card.appendChild(text);
+
+		win.appendChild(sec);
+	}
+}
+
+function LoadIndexContent(server, anima) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+			var recommend = JSON.parse(xhttp.responseText).recommend;
+			ShowIndexContent(recommend, anima);
+    }
+  };
+	xhttp.open("GET", server, true);
+  xhttp.send();
 }
 
 function ShowSortOptions(server, anima) {
