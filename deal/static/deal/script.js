@@ -8,26 +8,38 @@ function NewContentObjects(dishes) {
 			row.className = "w3-row-padding w3-margin-top";
 			content.appendChild(row);
 		}
-		col = document.createElement("div");
+		var col = document.createElement("div");
 		col.className = "w3-third";
 		row.appendChild(col);
-		card = document.createElement("div");
+		var card = document.createElement("div");
 		card.className = "w3-card-4";
-		img = document.createElement("img");
+		var img = document.createElement("img");
 		img.src = dishes[i].photoid;
 		img.alt = dishes[i].zhtitle;
 		img.style = "width:100%";
 		img.className = "w3-hover-opacity";
-		text = document.createElement("div");
+		var text = document.createElement("div");
 		text.className = "w3-container";
-		zt = document.createElement("h4");
-		ztt = document.createTextNode(dishes[i].zhtitle);
+		var zt = document.createElement("h4");
+		var ztt = document.createTextNode(dishes[i].zhtitle + '\n' + dishes[i].entitle);
 		zt.appendChild(ztt);
-		itemid = document.createElement("p");
-		itemidt = document.createTextNode("餐品編號: " + dishes[i].itemid);
+		var itemid = document.createElement("p");
+		var itemidt = document.createTextNode("餐品編號: " + dishes[i].itemid);
 		itemid.appendChild(itemidt);
 		text.appendChild(zt);
 		text.appendChild(itemid);
+		if (dishes[i].price) {
+			var priceinfo = document.createElement("p");
+			var priceinfot = document.createTextNode("CDN$ " + dishes[i].price + dishes[i].punit);
+			priceinfo.appendChild(priceinfot);
+			text.appendChild(priceinfo);
+		}
+		if (dishes[i].calorie) {
+			var calorieinfo = document.createElement("p");
+			var calorieinfot = document.createTextNode("Calorie " + dishes[i].calorie + dishes[i].punit);
+			calorieinfo.appendChild(calorieinfot);
+			text.appendChild(calorieinfo);
+		}
 		col.appendChild(card);
 		card.appendChild(img);
 		card.appendChild(text);

@@ -29,3 +29,7 @@
 </div>
 
 {%endblock%}
+
+{%block loadbody%}
+onload = "ShowSortOptions('{% url 'deal:meallist' %}')"
+{%endblock%}
