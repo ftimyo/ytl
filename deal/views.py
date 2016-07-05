@@ -15,25 +15,30 @@ def meallistJSON(dishes):
     dishlist = []
     for dish in dishes:
         zhtitle = dish.zhtitle
-        entry = {'zhtitle':zhtitle}
+        entitle = dish.entitle
+        itemid = '%06d'%dish.id
+        trackid = dish.id
+        photoid = dish.photoid.url
+        entry = {'zhtitle':zhtitle, 'entitle': entitle, 'itemid':itemid,
+                'trackid':trackid, 'photoid':photoid}
         dishlist.append(entry)
     dishlistres = {'dishlist':dishlist}
     return dishlistres
 
 def meallist(request):
-    dishes = Meal.objects.all()
     sort = request.GET.get('sort')
-    print("sort is "+sort)
-    if sort == 'phl':
+    cat = request.GET.get('cat')
+    if cat == None or cat == -1:
+        cat = -1
+        dishes = Meal.objects.all()
+    else:
+        dishes = Meal.objects.filter(catalog__id = cat)
+    print("cat id "+str(cat))
+    print(dishes)
+    if sort == None or sort == 'phl':
         dishes = dishes.order_by('-price')
     else:
         dishes = dishes.order_by('price')
 
     context = meallistJSON(dishes)
     return JsonResponse(context)
-
-    '''
-    context = {'dishes':dishes}
-    return render(request, 'deal/meallist.html', context)
-    '''
-

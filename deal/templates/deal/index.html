@@ -1,25 +1,31 @@
 {%extends "deal/base.html"%}
 {%block title%}水餃皇后{%endblock%}
+{%block brand%}水餃皇后YTL{%endblock%}
 
 {%block content%}
 
-<form action="GET">
+<form action="GET" class="form-inline" role="form">
+	<div class="form-group">
 	<label for="catalog">排序:</label>
-	<select name="sort" id="sort" onchange="ShowSortOptions('{% url 'deal:meallist' %}')">
+	<select class="form-control" name="sort" id="sort" onchange="ShowSortOptions('{% url 'deal:meallist' %}')">
 		<option value="plh">價格: 由低到高</option>
 		<option value="phl">價格: 由高到低</option>
 	</select>
+	</div>
 
+	<div class="form-group">
 	<label for="catalog">類別:</label>
-	<select name="catalog" id="catalog" onchange="ShowSortOptions('{% url 'deal:meallist' %}')">
+	<select class="form-control"  name="catalog" id="catalog" onchange="ShowSortOptions('{% url 'deal:meallist' %}')">
+		<option value=-1 selected>全部分類</option>
 		{% for ent in catalog %}
 		<option value={{ent.id}}>{{ent.name}}</option>
 		{% endfor %}
-		<option value=-1 selected>全部分類</option>
 	</select>
+	</div>
 
 </form>
-<br/>
-<div id="txtHint">Meal info will be listed here...</div>
+
+<div id="content" class="container" style="max-width:1100px;margin-top:80px;margin-bottom:80px"> 
+</div>
 
 {%endblock%}
