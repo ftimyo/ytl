@@ -5,6 +5,46 @@ from redactor.fields import RedactorField
 import hashlib
 import datetime
 import os
+def rename_wechatID(instance, filename):
+    h = instance.md5sum
+    basename, ext = os.path.splitext(filename)
+
+    if not h:
+        md5 = hashlib.md5()
+        for chunk in instance.wechatqr.chunks():
+            md5.update(chunk)
+        h = md5.hexdigest()
+        instance.md5sum = h
+
+    return os.path.join('wechatID', h[0:1], h[1:2], h + ext.lower())
+
+
+class MealTheme(models.Model):
+    title = models.CharField('關於我們標題(必填):', max_length=100, help_text='限50字')
+    desc = RedactorField(verbose_name='關於我們的故事(必填):', redactor_options={'focus': 'true'},
+            allow_file_upload=False, allow_image_upload=False)
+    name = models.CharField('暱稱(必填):', max_length=100, help_text='限50字')
+    wechat = models.CharField('微信帳號(必填):', max_length=100, help_text='限50字')
+    wechatqr = models.ImageField(verbose_name='微信QR碼圖片(必填)', upload_to=rename_wechatID)
+
+    facebook = models.CharField('臉書帳號(選填):', max_length=100,
+            help_text='限50字',blank=True,null=True)
+    twitter = models.CharField('推特帳號(選填):', max_length=100,
+            help_text='限50字',blank=True,null=True)
+    weibo = models.CharField('新浪微博(選填):', max_length=100,
+            help_text='限50字',blank=True,null=True)
+    tel = models.CharField('電話(必填):', max_length=100, help_text='限50字')
+    email = models.CharField('電子郵件(必填):', max_length=100, help_text='限50字')
+    pub_time = models.DateTimeField('發布時間', auto_now_add=True)
+    update_time = models.DateTimeField('修改時間', auto_now=True)
+    md5sum = models.CharField(max_length=36, editable=False)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ('update_time',)
+
 
 class MealCatalog(models.Model):
     name = models.CharField('類別名稱', unique = True, max_length=100, help_text='限50字')

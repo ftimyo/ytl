@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import MealCatalog, MealPhoto, Meal
+from .models import MealCatalog, MealPhoto, Meal, MealTheme
 
 # Register your models here.
 @admin.register(MealCatalog)
@@ -11,6 +11,8 @@ class MealCatalogAdmin(admin.ModelAdmin):
                 {'fields' : ('desc', )}),
             ]
     list_display = ['name', 'owner', 'pub_time', 'update_time']
+    list_filter = ['pub_time', 'update_time',]
+    search_fields = ['name', 'desc']
 
     def save_model(self, request, obj, form, change):
         obj.owner = request.user
@@ -48,8 +50,21 @@ class MealAdmin(admin.ModelAdmin):
             ]
     filter_horizontal = ('catalog', )
 
+    list_filter = ['pub_time', 'update_time', 'display']
+    search_fields = ['zhtitle', 'ingredient', 'desc']
+
     def save_model(self, request, obj, form, change):
         obj.owner = request.user
         obj.save()
 
 admin.site.register(Meal, MealAdmin)
+
+@admin.register(MealTheme)
+class MealThemeAdmin(admin.ModelAdmin):
+    fieldsets = [
+            ('關於我們',{'fields':('title','desc')}),
+            ('聯繫方式',{'fields':('name','wechat','wechatqr','facebook','twitter','weibo','tel','email')}),
+            ]
+    list_display = ['title','name','email','pub_time','update_time']
+    list_filter = ['pub_time', 'update_time']
+    search_fields = ['name', 'title', 'desc']
