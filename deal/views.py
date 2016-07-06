@@ -72,3 +72,33 @@ def homelist(request):
     catalog = MealCatalog.objects.all()
     context = {'catalog':catalog}
     return render(request, 'deal/home.html', context)
+
+def mealdetail(request, mealid):
+    mealid = int(mealid)
+    try:
+        dish = Meal.objects.get(pk = mealid)
+    except:
+        dish = None
+    context = dict()
+    if dish:
+        catalog = dish.catalog.all()
+        context = {'dish':dish, 'catalog':catalog}
+    return render(request, 'deal/detail.html', context)
+
+def mealdetailJSON(request):
+    mealid = request.GET.get('mealid')
+    try:
+        dish = Meal.objects.get(pk = mealid)
+    except:
+        dish = None
+    if dish:
+        photos = dish.mealphoto_set.all()
+        photolist = []
+        for photo in photos:
+            name = photo.name
+            image = photo.image.url
+            pid = photo.id
+            entry = {'name':name, 'image':image, 'pid':pid}
+            photolist.append(entry)
+        photolist = {'photos':photolist}
+    return JsonResponse(photolist)

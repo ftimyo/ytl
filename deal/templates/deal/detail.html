@@ -1,0 +1,59 @@
+{%extends "deal/base.html"%}
+{%block title%}水餃皇后{%endblock%}
+{%block brand%}水餃皇后YTL{%endblock%}
+
+{%block content%}
+{%if dish%}
+<h1>{{dish.zhtitle}} {{dish.entitle}}</h1>
+<div class="w3-section w3-container">
+<div class="w3-card-2">
+	<img src="{{dish.photoid.url}}" alt="{{dish.zhtitle}}" style="width:100%">
+</div>
+</div>
+
+<div class="w3-section w3-container">
+<p>
+{%for cat in catalog%}
+<span class="w3-tag w3-black w3-text-white">{{cat.name}}</span>
+{%endfor%}
+</p>
+{%if dish.price%}
+<h4>CDN$ {{dish.price}} {{dish.unit}}</h4>
+{%endif%}
+{%if dish.cal%}
+<h4>熱量: {{dish.cal}} {{dish.cunit}}</h4>
+{%endif%}
+</div>
+
+<div class="w3-section w3-container">
+<h4>配料:</h4>
+<p>
+{%autoescape off%}
+{{dish.ingredient}}
+{%endautoescape%}
+</p>
+</div>
+
+<div class="w3-section w3-container">
+<h4>餐品故事:</h4>
+<p>
+{%autoescape off%}
+{{dish.desc}}
+{%endautoescape%}
+</p>
+</div>
+
+<div id="imm" class="w3-modal" onclick="this.style.display='none'">
+  <div class="w3-modal-content w3-animate-zoom">
+    <img id="immc" style="width:100%">
+  </div>
+</div>
+
+{%else%}
+<h1>沒有找到指定的餐品！</h1>
+{%endif%}
+{%endblock%}
+
+{%block loadbody%}
+onload="LoadGallery('{%url 'deal:detailJSON' %}',{{dish.id}})"
+{%endblock%}

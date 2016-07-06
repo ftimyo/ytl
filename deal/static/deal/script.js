@@ -112,3 +112,49 @@ function ShowSortOptions(server, anima) {
 	xhttp.open("GET", server+'?sort='+sort+'&cat='+cat, true);
   xhttp.send();
 }
+
+function LoadGalleryContent(photos) {
+	var win = document.getElementById("window");
+	var sec = document.createElement("div");
+	sec.className = "w3-section w3-container";
+	win.appendChild(sec);
+	var row;
+	for (var i in photos) {
+		
+		if (i % 4 == 0) {
+			row = document.createElement("div");
+			row.className = "w3-row-padding w3-margin-top";
+			sec.appendChild(row);
+		}
+		var col = document.createElement("div");
+		col.className = "w3-quarter";
+		var card = document.createElement("div");
+		card.className = "w3-card-2";
+		row.appendChild(col);
+		col.appendChild(card);
+		var img = document.createElement("img");
+		img.src = photos[i].image;
+		img.alt = photos[i].name;
+		img.style = "width:100%;cursor:zoom-in";
+		img.onclick = ShowImageModel;
+		img.className="w3-hover-opacity";
+		card.appendChild(img);
+	}
+}
+
+function ShowImageModel() {
+	document.getElementById("immc").src = this.src;
+	document.getElementById("imm").style.display = "block";
+}
+
+function LoadGallery(server, dishid) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+			var photos = JSON.parse(xhttp.responseText).photos;
+			LoadGalleryContent(photos)
+    }
+  };
+	xhttp.open("GET", server+'?mealid='+dishid, true);
+  xhttp.send();
+}
