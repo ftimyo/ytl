@@ -4,10 +4,13 @@
 
 {%block content%}
 {%if dish%}
-<h1>{{dish.zhtitle}} {{dish.entitle}}</h1>
+<h1 onclick="document.getElementById('photoid').style.display='block';">{{dish.zhtitle}} {{dish.entitle}}</h1>
 <div class="w3-section w3-container">
-<div class="w3-card-2">
+<div id="photoid" class="picture w3-display-container" style="display: block;">
 	<img src="{{dish.photoid.url}}" alt="{{dish.zhtitle}}" style="width:100%">
+	<span onclick="this.parentElement.style.display='none'"
+		class="w3-display-topright w3-closebtn w3-padding-large w3-text-cyan
+		w3-hover-red w3-jumbo w3-hover-text-light-grey">×</span>
 </div>
 </div>
 

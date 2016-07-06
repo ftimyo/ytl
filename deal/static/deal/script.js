@@ -12,12 +12,13 @@ function NewContentObjects(dishes, anima) {
 		col.className = "w3-third " + anima;
 		row.appendChild(col);
 		var card = document.createElement("div");
-		card.className = "w3-card-8";
+		card.className = "w3-card-8 w3-hover-opacity";
+		card.style = "cursor:pointer;";
+		card.onclick = (function(link){return function(){window.open(link);}})(dishes[i].detail);
 		var img = document.createElement("img");
 		img.src = dishes[i].photoid;
 		img.alt = dishes[i].zhtitle;
 		img.style = "width:100%";
-		img.className = "w3-hover-opacity";
 		var text = document.createElement("div");
 		text.className = "w3-container";
 		var zt = document.createElement("h4");
@@ -53,9 +54,12 @@ function ShowIndexContent(recommend, anima) {
 		var sec = document.createElement("div");
 		sec.className = "w3-section w3-container " + anima;
 		var card = document.createElement("div");
-		card.className = "w3-card-4";
+		card.className = "w3-card-4 w3-hover-opacity";
+		card.style = "cursor:pointer;";
+		card.onclick = (function(link){return function(){window.open(link);}})(recommend[i].detail);
 		sec.appendChild(card);
 		var img = document.createElement("img");
+
 		img.src = recommend[i].photoid;
 		img.alt = recommend[i].zhtitle;
 		img.style = "width:100%";
@@ -118,6 +122,9 @@ function LoadGalleryContent(photos) {
 	var sec = document.createElement("div");
 	sec.className = "w3-section w3-container";
 	win.appendChild(sec);
+	title = document.createElement("h4");
+	title.innerHTML = "餐品相片:";
+	sec.appendChild(title);
 	var row;
 	for (var i in photos) {
 		

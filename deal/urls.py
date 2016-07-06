@@ -7,6 +7,6 @@ urlpatterns = [
     url(r'^meallist$', views.meallist, name='meallist'), #AJAX
     url(r'^$', views.homelist, name='home'), #PAGE
     url(r'^homelist$', views.homelistJSON, name='homelistJSON'), #AJAX
-    url(r'^meal/(?P<mealid>[0-9]+)$', views.mealdetail, name='detail'), #PAGE
+    url(r'^meal/(?P<mealid>[0-9]+)/$', views.mealdetail, name='detail'), #PAGE
     url(r'^mealjson$',views.mealdetailJSON, name='detailJSON') #AJAX
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Meal, MealPhoto, MealCatalog
+from django.core.urlresolvers import reverse
 
 # Create your views here.
 
@@ -23,9 +24,10 @@ def meallistJSON(dishes):
         punit = dish.unit
         calorie = dish.cal
         cunit = dish.cunit
+        detail = reverse('deal:detail',args=[trackid])
         entry = {'zhtitle':zhtitle, 'entitle': entitle, 'itemid':itemid,
                 'trackid':trackid, 'photoid':photoid, 'price':price,
-                'punit':punit, 'calorie':calorie, 'cunit':cunit}
+                'punit':punit, 'calorie':calorie, 'cunit':cunit,'detail':detail}
         dishlist.append(entry)
     dishlistres = {'dishlist':dishlist}
     return dishlistres
@@ -61,9 +63,11 @@ def homelistJSON(request):
         calorie = dish.cal
         cunit = dish.cunit
         desp = dish.desc
+        detail = reverse('deal:detail',args=[trackid])
         entry = {'zhtitle':zhtitle, 'entitle': entitle, 'itemid':itemid,
                 'trackid':trackid, 'photoid':photoid, 'price':price,
-                'punit':punit, 'calorie':calorie, 'cunit':cunit, 'desp':desp}
+                'punit':punit, 'calorie':calorie, 'cunit':cunit, 'desp':desp,
+                'detail':detail}
         recommend.append(entry)
     jcontext = {'recommend':recommend}
     return JsonResponse(jcontext)
