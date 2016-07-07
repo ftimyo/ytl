@@ -20,6 +20,8 @@ def rename_wechatID(instance, filename):
 
 
 class MealTheme(models.Model):
+    sitetitle = models.CharField('網站標題(必填):', max_length=100, help_text='限50字')
+    brand = models.CharField('品牌名稱(必填):', max_length=100, help_text='限50字')
     title = models.CharField('關於我們標題(必填):', max_length=100, help_text='限50字')
     desc = RedactorField(verbose_name='關於我們的故事(必填):', redactor_options={'focus': 'true'},
             allow_file_upload=False, allow_image_upload=False)

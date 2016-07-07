@@ -1,7 +1,7 @@
 {% load staticfiles %}
 <!DOCTYPE html>
 <html>
-<title>{%block title%}Younger Than Look{%endblock%}</title>
+<title>{%block title%}YTL{%endblock%}</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
 <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
@@ -21,14 +21,14 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-			<a class="navbar-brand" href="#">{%block brand %}水餃皇后{%endblock%}</a>
+			<a class="navbar-brand" href="#">{%block brand %}YTL{%endblock%}</a>
     </div>
 		<div class="collapse navbar-collapse" id="myNavbar">
     <ul class="nav navbar-nav">
-			<li {%block lnavhome%}{%endblock%}><a {%block navhome%}href="#"{%endblock%}>精品推薦</a></li>
-			<li {%block lnavmenu%}{%endblock%}><a {%block navmenu%}href="#"{%endblock%}>菜單</a></li>
-			<li {%block lnavabout%}{%endblock%}><a {%block navabout%}href="#"{%endblock%}>關於我們</a></li>
-			<li {%block lnavcontact%}{%endblock%}><a {%block navcontact%}href="#"{%endblock%}>聯繫我們</a></li>
+			<li {%block lnavhome%}{%endblock%}><a {%block navhome%}href="{% url 'deal:home' %}"{%endblock%}>精品推薦</a></li>
+			<li {%block lnavmenu%}{%endblock%}><a {%block navmenu%}href="{% url 'deal:menu'%}"{%endblock%}>菜單</a></li>
+			<li {%block lnavabout%}{%endblock%}><a {%block navabout%}href="{% url 'deal:about'%}"{%endblock%}>關於我們</a></li>
+			<li {%block lnavcontact%}{%endblock%}><a {%block navcontact%}href="{% url 'deal:contact' %}"{%endblock%}>聯繫我們</a></li>
     </ul>
 		</div>
   </div>

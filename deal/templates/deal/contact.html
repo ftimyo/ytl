@@ -1,8 +1,19 @@
 {%extends "deal/base.html"%}
-{%block title%}水餃皇后{%endblock%}
-{%block brand%}水餃皇后YTL{%endblock%}
 
 {%block lnavcontact%}class="active"{%endblock%}
+{%block navcontact%}href="#"{%endblock%}
+
+{%block title%}
+{%for one in contact%}
+{{one.sitetitle}}
+{%endfor%}
+{%endblock%}
+
+{%block brand%}
+{%for one in contact%}
+{{one.brand}}
+{%endfor%}
+{%endblock%}
 
 {%block content%}
 {%for one in contact%}

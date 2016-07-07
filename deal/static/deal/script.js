@@ -144,9 +144,12 @@ function LoadGalleryContent(photos) {
 	var sec = document.createElement("div");
 	sec.className = "w3-section w3-container";
 	win.appendChild(sec);
-	title = document.createElement("h4");
-	title.innerHTML = "餐品相片:";
-	sec.appendChild(title);
+
+	if (photos.length != 0) {
+		title = document.createElement("h4");
+		title.innerHTML = "餐品相片:";
+		sec.appendChild(title);
+	}
 	var row;
 	for (var i in photos) {
 		

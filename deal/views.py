@@ -9,7 +9,8 @@ from django.core.urlresolvers import reverse
 
 def menulist(request):
     catalog = MealCatalog.objects.all()
-    context = {'catalog':catalog}
+    theme = MealTheme.objects.all()[:1]
+    context = {'catalog':catalog,'theme':theme}
     return render(request, 'deal/menu.html', context)
 
 def meallistJSON(dishes, cat):
@@ -81,11 +82,13 @@ def homelistJSON(request):
 
 def homelist(request):
     catalog = MealCatalog.objects.all()
-    context = {'catalog':catalog}
+    theme = MealTheme.objects.all()[:1]
+    context = {'catalog':catalog,'theme':theme}
     return render(request, 'deal/home.html', context)
 
 def mealdetail(request, mealid):
     mealid = int(mealid)
+    theme = MealTheme.objects.all()[:1]
     try:
         dish = Meal.objects.get(pk = mealid)
     except:
@@ -93,7 +96,7 @@ def mealdetail(request, mealid):
     context = dict()
     if dish:
         catalog = dish.catalog.all()
-        context = {'dish':dish, 'catalog':catalog}
+        context = {'dish':dish, 'catalog':catalog,'theme':theme}
     return render(request, 'deal/detail.html', context)
 
 def mealdetailJSON(request):
