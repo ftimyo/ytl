@@ -5,6 +5,9 @@ from redactor.fields import RedactorField
 import hashlib
 import datetime
 import os
+
+css_themes = ['cerulean','cosmo','cyborg','darkly','flatly','journal','lumen','paper','readable',
+    'sandstone','simplex','slate','spacelab','superhero','united','yeti']
 def rename_wechatID(instance, filename):
     h = instance.md5sum
     basename, ext = os.path.splitext(filename)
@@ -18,10 +21,11 @@ def rename_wechatID(instance, filename):
 
     return os.path.join('wechatID', h[0:1], h[1:2], h + ext.lower())
 
-
 class MealTheme(models.Model):
     sitetitle = models.CharField('網站標題(必填):', max_length=100, help_text='限50字')
     brand = models.CharField('品牌名稱(必填):', max_length=100, help_text='限50字')
+    doptions = zip(range(0,len(css_themes)), css_themes)
+    themecolor = models.IntegerField('網站主題顏色:', default = -1, choices=doptions)
     title = models.CharField('關於我們標題(必填):', max_length=100, help_text='限50字')
     desc = RedactorField(verbose_name='關於我們的故事(必填):', redactor_options={'focus': 'true'},
             allow_file_upload=False, allow_image_upload=False)
@@ -45,7 +49,7 @@ class MealTheme(models.Model):
         return self.title
 
     class Meta:
-        ordering = ('update_time',)
+        ordering = ('-update_time',)
 
 
 class MealCatalog(models.Model):

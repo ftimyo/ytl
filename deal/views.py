@@ -2,7 +2,7 @@ import json
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Meal, MealPhoto, MealCatalog, MealTheme
+from .models import Meal, MealPhoto, MealCatalog, MealTheme, css_themes
 from django.core.urlresolvers import reverse
 
 # Create your views here.
@@ -11,6 +11,9 @@ def menulist(request):
     catalog = MealCatalog.objects.all()
     theme = MealTheme.objects.all()[:1]
     context = {'catalog':catalog,'theme':theme}
+    if theme and theme[0].themecolor >= 0:
+        i = theme[0].themecolor
+        context.update({'colorcss':'deal/'+css_themes[i]+'.css'})
     return render(request, 'deal/menu.html', context)
 
 def meallistJSON(dishes, cat):
@@ -84,6 +87,9 @@ def homelist(request):
     catalog = MealCatalog.objects.all()
     theme = MealTheme.objects.all()[:1]
     context = {'catalog':catalog,'theme':theme}
+    if theme and theme[0].themecolor >= 0:
+        i = theme[0].themecolor
+        context.update({'colorcss':'deal/'+css_themes[i]+'.css'})
     return render(request, 'deal/home.html', context)
 
 def mealdetail(request, mealid):
@@ -97,6 +103,9 @@ def mealdetail(request, mealid):
     if dish:
         catalog = dish.catalog.all()
         context = {'dish':dish, 'catalog':catalog,'theme':theme}
+    if theme and theme[0].themecolor >= 0:
+        i = theme[0].themecolor
+        context.update({'colorcss':'deal/'+css_themes[i]+'.css'})
     return render(request, 'deal/detail.html', context)
 
 def mealdetailJSON(request):
@@ -118,10 +127,16 @@ def mealdetailJSON(request):
     return JsonResponse(photolist)
 
 def AboutPage(request):
-    about = MealTheme.objects.all()[:1]
-    context = {'about':about}
+    theme = MealTheme.objects.all()[:1]
+    context = {'theme':theme}
+    if theme and theme[0].themecolor >= 0:
+        i = theme[0].themecolor
+        context.update({'colorcss':'deal/'+css_themes[i]+'.css'})
     return render(request, 'deal/about.html', context)
 def ContactPage(request):
-    contact = MealTheme.objects.all()[:1]
-    context = {'contact':contact}
+    theme = MealTheme.objects.all()[:1]
+    context = {'theme':theme}
+    if theme and theme[0].themecolor >= 0:
+        i = theme[0].themecolor
+        context.update({'colorcss':'deal/'+css_themes[i]+'.css'})
     return render(request, 'deal/contact.html', context)

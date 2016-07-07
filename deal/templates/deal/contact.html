@@ -4,19 +4,19 @@
 {%block navcontact%}href="#"{%endblock%}
 
 {%block title%}
-{%for one in contact%}
+{%for one in theme%}
 {{one.sitetitle}}
 {%endfor%}
 {%endblock%}
 
 {%block brand%}
-{%for one in contact%}
+{%for one in theme%}
 {{one.brand}}
 {%endfor%}
 {%endblock%}
 
 {%block content%}
-{%for one in contact%}
+{%for one in theme%}
 <div id="qr" class="w3-section w3-container w3-center"
 	onclick="this.style.display='none';document.getElementById('wechat').style.cursor='zoom-in';
 	document.getElementById('cname').style.display='block';">
