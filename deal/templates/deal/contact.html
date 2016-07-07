@@ -7,14 +7,17 @@
 {%block content%}
 {%for one in contact%}
 <div id="qr" class="w3-section w3-container w3-center"
-	onclick="this.style.display='none';document.getElementById('wechat').style.cursor='zoom-in';">
+	onclick="this.style.display='none';document.getElementById('wechat').style.cursor='zoom-in';
+	document.getElementById('cname').style.display='block';">
 	<img class="w3-card-12 w3-center" src="{{one.wechatqr.url}}"
 	style="width:100%;cursor:zoom-out" alt="{{one.wechat}}"/>
 </div>
+<h1 id="cname" class="w3-center" style="display:'none';">{{one.name}}</h1>
 <div class="w3-section w3-container">
 	<ul class="w3-ul w3-card-12">
 	  <li id="wechat" class="w3-padding-16"
-			onclick="this.style.cursor='auto';document.getElementById('qr').style.display='block';">
+			onclick="this.style.cursor='auto';document.getElementById('qr').style.display='block';
+			document.getElementById('cname').style.display='none';">
 			<span class="fa fa-wechat" style="font-size:48px;"></span>
 			<span style="font-size:48px;float:right;">{{one.wechat}}</span>
 		</li>

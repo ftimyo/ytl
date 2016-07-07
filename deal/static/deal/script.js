@@ -1,6 +1,25 @@
-function NewContentObjects(dishes, anima) {
+function NewContentObjects(dishes, anima, catn, catd) {
 	var content = document.getElementById("content");
 	content.innerHTML = "";
+	if (catn) {
+		var catm = document.createElement("div");
+		catm.className = "w3-section w3-container w3-center w3-card-12";
+		var cls = document.createElement("span");
+		cls.onclick=function(){this.parentElement.style.display='none';}
+		cls.className= "w3-closebtn w3-padding-large w3-xxlarge w3-text-cyan w3-hover-text-dark-grey";
+		cls.innerHTML = "x";
+
+		var catname = document.createElement("h1");
+		catname.innerHTML = catn;
+		catm.appendChild(cls);
+		catm.appendChild(catname);
+		if (catd) {
+			var catdesc = document.createElement("p");
+			catdesc.innerHTML = catd;
+			catm.appendChild(catdesc);
+		}
+		content.appendChild(catm);
+	}
 	var row;
 	for (var i in dishes) {
 		if (i % 3 == 0) {
@@ -109,8 +128,11 @@ function ShowSortOptions(server, anima) {
   xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (xhttp.readyState == 4 && xhttp.status == 200) {
-			var dishes = JSON.parse(xhttp.responseText).dishlist;
-			NewContentObjects(dishes, anima);
+			var res = JSON.parse(xhttp.responseText);
+			var dishes = res.dishlist;
+			var catn = res.catn;
+			var catd = res.catd;
+			NewContentObjects(dishes, anima, catn, catd);
     }
   };
 	xhttp.open("GET", server+'?sort='+sort+'&cat='+cat, true);

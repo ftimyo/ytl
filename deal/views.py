@@ -12,7 +12,7 @@ def menulist(request):
     context = {'catalog':catalog}
     return render(request, 'deal/menu.html', context)
 
-def meallistJSON(dishes):
+def meallistJSON(dishes, cat):
     dishlist = []
     for dish in dishes:
         zhtitle = dish.zhtitle
@@ -30,23 +30,30 @@ def meallistJSON(dishes):
                 'punit':punit, 'calorie':calorie, 'cunit':cunit,'detail':detail}
         dishlist.append(entry)
     dishlistres = {'dishlist':dishlist}
+    if cat:
+        catn = cat.name
+        catd = cat.desc
+        dishlistres.update({'catn':catn,'catd':catd})
+
     return dishlistres
 
 def meallist(request):
     sort = request.GET.get('sort')
     cat = int(request.GET.get('cat'))
+    catalog = None
     #JSON Response
     if cat == None or cat == -1:
         cat = -1
         dishes = Meal.objects.filter(display__gt = 0)
     else:
         dishes = Meal.objects.filter(catalog__id = cat, display__gt = 0)
+        catalog = MealCatalog.objects.get(pk=cat)
     if sort == None or sort == 'phl':
         dishes = dishes.order_by('-price')
     else:
         dishes = dishes.order_by('price')
 
-    context = meallistJSON(dishes)
+    context = meallistJSON(dishes, catalog)
     return JsonResponse(context)
 
 def homelistJSON(request):
