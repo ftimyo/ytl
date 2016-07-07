@@ -1,0 +1,44 @@
+{%extends "deal/base.html"%}
+{%block title%}水餃皇后{%endblock%}
+{%block brand%}水餃皇后YTL{%endblock%}
+
+{%block lnavcontact%}class="active"{%endblock%}
+
+{%block content%}
+{%for one in contact%}
+<div id="qr" class="w3-section w3-container w3-center"
+	onclick="this.style.display='none';document.getElementById('wechat').style.cursor='zoom-in';">
+	<img class="w3-card-12 w3-center" src="{{one.wechatqr.url}}"
+	style="width:100%;cursor:zoom-out" alt="{{one.wechat}}"/>
+</div>
+<div class="w3-section w3-container">
+	<ul class="w3-ul w3-card-12">
+	  <li id="wechat" class="w3-padding-16"
+			onclick="this.style.cursor='auto';document.getElementById('qr').style.display='block';">
+			<span class="fa fa-wechat" style="font-size:48px;"></span>
+			<span style="font-size:48px;float:right;">{{one.wechat}}</span>
+		</li>
+	  <li class="w3-padding-16">
+			<span class="glyphicon glyphicon-phone" style="font-size:48px;"></span>
+			<span style="font-size:48px;float:right;">{{one.tel}}</span>
+		</li>
+	  <li class="w3-padding-16">
+			<span class="glyphicon glyphicon-envelope" style="font-size:48px;"></span>
+			<span style="font-size:48px;float:right;">{{one.email}}</span>
+		</li>
+	  <li class="w3-padding-16">
+			<span class="fa fa-weibo" style="font-size:48px;"></span>
+			<span style="font-size:48px;float:right;">{{one.weibo}}</span>
+		</li>
+	  <li class="w3-padding-16">
+			<span class="fa fa-facebook" style="font-size:48px;"></span>
+			<span style="font-size:48px;float:right;">{{one.facebook}}</span>
+		</li>
+	  <li class="w3-padding-16">
+			<span class="fa fa-twitter" style="font-size:48px;"></span>
+			<span style="font-size:48px;float:right;">{{one.twitter}}</span>
+		</li>
+	</ul>
+</div>
+{%endfor%}
+{%endblock%}

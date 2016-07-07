@@ -1,0 +1,20 @@
+{%extends "deal/base.html"%}
+{%block title%}水餃皇后{%endblock%}
+{%block brand%}水餃皇后YTL{%endblock%}
+
+{%block lnavabout%}class="active"{%endblock%}
+
+{%block content%}
+	{%for one in about%}
+<div class="w3-section w3-container w3-center w3-card-12">
+	<h1>{{one.title}}</h1>
+</div>
+<div class="w3-section w3-container w3-center w3-card-12">
+	{%autoescape off%}
+	<p>
+	{{one.desc}}
+	</p>
+	{%endautoescape%}
+</div>
+	{%endfor%}
+{%endblock%}
