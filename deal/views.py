@@ -2,7 +2,7 @@ import json
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Meal, MealPhoto, MealCatalog
+from .models import Meal, MealPhoto, MealCatalog, MealTheme
 from django.core.urlresolvers import reverse
 
 # Create your views here.
@@ -106,3 +106,12 @@ def mealdetailJSON(request):
             photolist.append(entry)
         photolist = {'photos':photolist}
     return JsonResponse(photolist)
+
+def AboutPage(request):
+    about = MealTheme.objects.all()[:1]
+    context = {'about':about}
+    return render(request, 'deal/about.html', context)
+def ContactPage(request):
+    contact = MealTheme.objects.all()[:1]
+    context = {'contact':contact}
+    return render(request, 'deal/contact.html', context)
