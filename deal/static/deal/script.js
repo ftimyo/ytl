@@ -1,9 +1,26 @@
-function NewContentObjects(dishes, anima, catn, catd) {
+function NewContentObjects(dishes, anima, catn, catd, reloadcat) {
 	var content = document.getElementById("content");
+	var catb = document.getElementById("cat");
+	var keep = 1;
+	if (catb) {
+		if (catb.style.display == 'none') {
+			keep = 0;
+		}
+	}
 	content.innerHTML = "";
 	if (catn) {
 		var catm = document.createElement("div");
-		catm.className = "w3-section w3-container w3-center w3-card-12";
+		if (keep == 1 || reloadcat) {
+			catm.style.display = 'block';
+		} else {
+			catm.style.display = 'none';
+		}
+		if (reloadcat) {
+			catm.className = "w3-section w3-container w3-center w3-card-12 " + anima;
+		} else {
+			catm.className = "w3-section w3-container w3-center w3-card-12";
+		}
+		catm.id = "cat";
 		var cls = document.createElement("span");
 		cls.onclick=function(){this.parentElement.style.display='none';}
 		cls.className= "w3-closebtn w3-padding-large w3-xxlarge w3-text-cyan w3-hover-text-dark-grey";
@@ -118,7 +135,7 @@ function LoadIndexContent(server, anima) {
   xhttp.send();
 }
 
-function ShowSortOptions(server, anima) {
+function ShowSortOptions(server, anima, reloadcat) {
 	sort = document.getElementById("sort").value;
 	cat = document.getElementById("catalog").value;
   var xhttp;
@@ -132,7 +149,7 @@ function ShowSortOptions(server, anima) {
 			var dishes = res.dishlist;
 			var catn = res.catn;
 			var catd = res.catd;
-			NewContentObjects(dishes, anima, catn, catd);
+			NewContentObjects(dishes, anima, catn, catd, reloadcat);
     }
   };
 	xhttp.open("GET", server+'?sort='+sort+'&cat='+cat, true);
@@ -147,7 +164,7 @@ function LoadGalleryContent(photos) {
 
 	if (photos.length != 0) {
 		title = document.createElement("h4");
-		title.innerHTML = "餐品相片:";
+		title.innerHTML = "餐品寫真:";
 		sec.appendChild(title);
 	}
 	var row;
