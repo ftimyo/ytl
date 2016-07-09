@@ -1,3 +1,33 @@
+/*Cookie Helpers BEGIN*/
+function GetCookie(key) {
+  var data = document.cookie.split(";");
+  for (var i = 0; i < data.length; ++i) {
+    entry = data[i].split("=");
+    var k = entry[0].replace(/^\s+|\s+$/g,'')
+    if (k == key) {
+      return entry[1];
+    }
+  }
+  return "";
+}
+
+function SetCookie(key,val,h) {
+	var t = new Date();
+	t.setTime(t.getTime() + (h*60*60*1000));
+	var expires = "expires=" + t.toGMTString();
+	document.cookie = key+"="+val+";"+expires;
+}
+/*Cookie Helpers END*/
+function PageSetup() {
+	var cart = GetCookie("cart");
+  if (cart == "") {
+		SetCookie("cart","",24);	
+	} else {
+		cart = JSON.parse(cart);
+		var ncart = document.getElementById("ncart");
+		ncart.innerHTML = (cart.length/3);
+	}
+}
 function NewContentObjects(dishes, anima, catn, catd, reloadcat) {
 	var content = document.getElementById("content");
 	var catb = document.getElementById("cat");
@@ -82,6 +112,7 @@ function NewContentObjects(dishes, anima, catn, catd, reloadcat) {
 			orderit.className = "btn btn-default";
 			orderit.style = "width:100%";
 			orderit.innerHTML = "加入購物車";
+			orderit.onclick = AddItemFromMenu;
 			text.appendChild(orderit);
 		}
 		col.appendChild(card);
@@ -145,6 +176,7 @@ function ShowIndexContent(recommend, anima) {
 			orderit.className = "btn btn-default";
 			orderit.style = "width:100%";
 			orderit.innerHTML = "加入購物車";
+			orderit.onclick = AddItemFromMenu;
 			text.appendChild(orderit);
 		}
 		card.appendChild(img);
@@ -155,6 +187,7 @@ function ShowIndexContent(recommend, anima) {
 }
 
 function LoadIndexContent(server, anima) {
+	PageSetup();
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (xhttp.readyState == 4 && xhttp.status == 200) {
@@ -167,6 +200,7 @@ function LoadIndexContent(server, anima) {
 }
 
 function ShowSortOptions(server, anima, reloadcat) {
+	PageSetup();
 	sort = document.getElementById("sort").value;
 	cat = document.getElementById("catalog").value;
   var xhttp;
@@ -228,6 +262,7 @@ function ShowImageModel() {
 }
 
 function LoadGallery(server, dishid) {
+	PageSetup();
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (xhttp.readyState == 4 && xhttp.status == 200) {
@@ -237,4 +272,19 @@ function LoadGallery(server, dishid) {
   };
 	xhttp.open("GET", server+'?mealid='+dishid, true);
   xhttp.send();
+}
+
+function AddItemFromMenu() {
+	var price = this.parentNode.getElementsByClassName("price")[0].innerHTML;
+	var itemid = this.parentNode.getElementsByClassName("itemid")[0].innerHTML;
+	var mname = this.parentNode.getElementsByClassName("mname")[0].innerHTML;
+	var cart = GetCookie("cart");
+	if (cart == "") {
+		cart = [mname,itemid,price];
+	} else {
+		cart = JSON.parse(cart);		
+		cart = cart.concat([mname,itemid,price]);
+	}
+	SetCookie("cart", JSON.stringify(cart),24);
+	PageSetup();
 }

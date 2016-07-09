@@ -34,6 +34,10 @@
 			<li {%block lnavabout%}{%endblock%}><a {%block navabout%}href="{% url 'deal:about'%}"{%endblock%}>關於我們</a></li>
 			<li {%block lnavcontact%}{%endblock%}><a {%block navcontact%}href="{% url 'deal:contact' %}"{%endblock%}>聯繫我們</a></li>
     </ul>
+		<ul class="nav navbar-nav navbar-right">
+		<li><a><span style="padding-right:5px;" class="fa fa-shopping-cart fa-lg"></span>
+		<span id="ncart" class="badge">0</span></a></li>
+		</ul>
 		</div>
   </div>
 </nav>
