@@ -48,27 +48,25 @@ function NewContentObjects(dishes, anima, catn, catd, reloadcat) {
 		col.className = "w3-third " + anima;
 		row.appendChild(col);
 		var card = document.createElement("div");
-		card.className = "w3-card-8 w3-hover-opacity";
-		card.style = "cursor:pointer;";
-		card.onclick = (function(link){return function(){window.open(link);}})(dishes[i].detail);
+		card.className = "w3-card-8";
+		card.style.paddingBottom = "10px";
 		var img = document.createElement("img");
 		img.src = dishes[i].photoid;
 		img.alt = dishes[i].zhtitle;
-		img.style = "width:100%";
+		img.className = "w3-hover-opacity";
+		img.style = "width:100%;cursor:pointer";
+		img.onclick = (function(link){return function(){window.open(link);}})(dishes[i].detail);
 		var text = document.createElement("div");
 		text.className = "w3-container";
 		var zt = document.createElement("h4");
-		var ztt = document.createTextNode(dishes[i].zhtitle + '\n' + dishes[i].entitle);
-		zt.appendChild(ztt);
+		zt.innerHTML = "<span class='mname'>"+dishes[i].zhtitle+"</span>" + ' ' + dishes[i].entitle;
 		var itemid = document.createElement("p");
-		var itemidt = document.createTextNode("餐品編號: " + dishes[i].itemid);
-		itemid.appendChild(itemidt);
+		itemid.innerHTML = "餐品編號: " + "<span class='itemid'>"+dishes[i].itemid+"</span>";
 		text.appendChild(zt);
 		text.appendChild(itemid);
 		if (dishes[i].price) {
 			var priceinfo = document.createElement("p");
-			var priceinfot = document.createTextNode("CDN$ " + dishes[i].price + dishes[i].punit);
-			priceinfo.appendChild(priceinfot);
+			priceinfo.innerHTML = "CDN$ " + "<span class='price'>"+dishes[i].price+"</span>"+dishes[i].punit;
 			text.appendChild(priceinfo);
 		}
 		if (dishes[i].calorie) {
@@ -76,6 +74,15 @@ function NewContentObjects(dishes, anima, catn, catd, reloadcat) {
 			var calorieinfot = document.createTextNode("Calorie " + dishes[i].calorie + dishes[i].punit);
 			calorieinfo.appendChild(calorieinfot);
 			text.appendChild(calorieinfo);
+		}
+		var orderit;
+		if (dishes[i].price) {
+			orderit = document.createElement("button");
+			orderit.type = "button";
+			orderit.className = "btn btn-default";
+			orderit.style = "width:100%";
+			orderit.innerHTML = "加入購物車";
+			text.appendChild(orderit);
 		}
 		col.appendChild(card);
 		card.appendChild(img);
@@ -90,32 +97,56 @@ function ShowIndexContent(recommend, anima) {
 		var sec = document.createElement("div");
 		sec.className = "w3-section w3-container " + anima;
 		var card = document.createElement("div");
-		card.className = "w3-card-4 w3-hover-opacity";
-		card.style = "cursor:pointer;";
-		card.onclick = (function(link){return function(){window.open(link);}})(recommend[i].detail);
+		card.className = "w3-card-8";
+		card.style.paddingBottom = "15px";
 		sec.appendChild(card);
 		var img = document.createElement("img");
 
 		img.src = recommend[i].photoid;
 		img.alt = recommend[i].zhtitle;
-		img.style = "width:100%";
+		img.className = "w3-hover-opacity";
+		img.style = "width:100%;cursor:pointer";
+		img.onclick = (function(link){return function(){window.open(link);}})(recommend[i].detail);
 
 		var text = document.createElement("div");
-		text.className = "w3-container w3-white";
+		text.className = "w3-container";
 
 		var title = document.createElement("h4");
-		title.innerHTML = recommend[i].zhtitle + ' ' + recommend[i].entitle;
-		var priceinfo = document.createElement("h4");
-		priceinfo.innerHTML = 'CDN$ ' + recommend[i].price + recommend[i].punit;
+		title.innerHTML = "<span class='mname'>"+recommend[i].zhtitle +"</span> "+ recommend[i].entitle;
+		var itemidtext = document.createElement("p");
+		itemidtext.innerHTML = "<strong>餐品編號:</strong> ";
+		var itemid = document.createElement("span");
+		itemid.innerHTML = recommend[i].itemid;
+		itemid.className = "itemid";
+		itemidtext.appendChild(itemid);
+		text.appendChild(title);
+		text.appendChild(itemidtext);
+		if (recommend[i].price) {
+			var priceinfo = document.createElement("h4");
+			priceinfo.innerHTML = 'CDN$ ';
+			price = document.createElement("span");
+			price.className = "price";
+			price.innerHTML = recommend[i].price;
+			priceinfo.appendChild(price);
+			priceinfo.innerHTML += recommend[i].punit;
+			text.appendChild(priceinfo);
+		}
+
 		var itemid = document.createElement("p");
 		itemid.innerHTML = "<strong>餐品編號:</strong> " + recommend[i].itemid;
 		var desp = document.createElement("p");
 		desp.innerHTML = recommend[i].desp;
 
-		text.appendChild(title);
-		text.appendChild(priceinfo);
-		text.appendChild(itemid);
 		text.appendChild(desp);
+		var orderit;
+		if (recommend[i].price) {
+			orderit = document.createElement("button");
+			orderit.type = "button";
+			orderit.className = "btn btn-default";
+			orderit.style = "width:100%";
+			orderit.innerHTML = "加入購物車";
+			text.appendChild(orderit);
+		}
 		card.appendChild(img);
 		card.appendChild(text);
 

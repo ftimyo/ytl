@@ -97,12 +97,14 @@ def mealdetail(request, mealid):
     theme = MealTheme.objects.all()[:1]
     try:
         dish = Meal.objects.get(pk = mealid)
+        itemid = '%06d'%dish.id
     except:
         dish = None
+        itemid = None
     context = dict()
     if dish:
         catalog = dish.catalog.all()
-        context = {'dish':dish, 'catalog':catalog,'theme':theme}
+        context = {'dish':dish,'itemid':itemid,'catalog':catalog,'theme':theme}
     if theme and theme[0].themecolor >= 0:
         i = theme[0].themecolor
         context.update({'colorcss':'deal/'+css_themes[i]+'.css'})

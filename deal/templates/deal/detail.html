@@ -14,7 +14,8 @@
 
 {%block content%}
 {%if dish%}
-<h1 onclick="document.getElementById('photoid').style.display='block';">{{dish.zhtitle}} {{dish.entitle}}</h1>
+<h1 onclick="document.getElementById('photoid').style.display='block';"><span
+		class='mname'>{{dish.zhtitle}}</span> {{dish.entitle}}</h1>
 <div class="w3-section w3-container">
 <div id="photoid" class="picture w3-display-container" style="display: block;">
 	<img src="{{dish.photoid.url}}" alt="{{dish.zhtitle}}" style="width:100%">
@@ -31,10 +32,14 @@
 {%endfor%}
 </p>
 {%if dish.price%}
-<h4>CDN$ {{dish.price}} {{dish.unit}}</h4>
+<h4>CDN$ <span class='price'>{{dish.price}}</span> {{dish.unit}}</h4>
 {%endif%}
 {%if dish.cal%}
 <h4>熱量: {{dish.cal}} {{dish.cunit}}</h4>
+{%endif%}
+<p>餐品編號: <span class='itemid'>{{itemid}}</span></p>
+{%if dish.price%}
+<button type="button" class="btn btn-default" style="width:100%;">加入購物車</button>
 {%endif%}
 </div>
 
