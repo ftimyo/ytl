@@ -35,13 +35,34 @@
 			<li {%block lnavcontact%}{%endblock%}><a {%block navcontact%}href="{% url 'deal:contact' %}"{%endblock%}>聯繫我們</a></li>
     </ul>
 		<ul class="nav navbar-nav navbar-right">
-		<li><a><span style="padding-right:5px;" class="fa fa-shopping-cart fa-lg"></span>
+		<li id="showcart"><a data-toggle="modal" data-target="#cartview"><span style="padding-right:5px;" class="fa fa-shopping-cart fa-lg"></span>
 		<span id="ncart" class="badge">0</span></a></li>
 		</ul>
 		</div>
   </div>
 </nav>
 
+<div class="modal fade" id="cartview" role="dialog">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<button type="button" class="close" data-dismiss="modal">&times;</button>
+<h4 class="modal-title">訂餐車</h4>
+</div>
+
+<div class="modal-body", id="cartt">
+</div>
+
+<div class="modal-footer">
+<h4>總計: <span id="total"></span></h4>
+<button type="button" class="btn btn-default">下單</button>
+<button type="button" class="btn btn-default" onclick="EmptyCart()">清空</button>
+<button type="button" class="btn btn-default" data-dismiss="modal">關閉</button>
+</div>
+</div>
+
+</div>
+</div>
 
 <div id = "window" class="container" style="max-width:1100px;margin-top:80px;margin-bottom:80px">
 {%block content%}

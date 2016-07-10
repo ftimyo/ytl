@@ -15,18 +15,12 @@ function SetCookie(key,val,h) {
 	var t = new Date();
 	t.setTime(t.getTime() + (h*60*60*1000));
 	var expires = "expires=" + t.toGMTString();
-	document.cookie = key+"="+val+";"+expires;
+	document.cookie = key+"="+val+";"+expires+";path=/";
 }
 /*Cookie Helpers END*/
 function PageSetup() {
-	var cart = GetCookie("cart");
-  if (cart == "") {
-		SetCookie("cart","",24);	
-	} else {
-		cart = JSON.parse(cart);
-		var ncart = document.getElementById("ncart");
-		ncart.innerHTML = (cart.length/3);
-	}
+	UpdateCartCount();
+	document.getElementById("showcart").addEventListener("click", ShowCartContent);
 }
 function NewContentObjects(dishes, anima, catn, catd, reloadcat) {
 	var content = document.getElementById("content");
@@ -111,7 +105,7 @@ function NewContentObjects(dishes, anima, catn, catd, reloadcat) {
 			orderit.type = "button";
 			orderit.className = "btn btn-default";
 			orderit.style = "width:100%";
-			orderit.innerHTML = "加入購物車";
+			orderit.innerHTML = "加入訂餐車";
 			orderit.onclick = AddItemFromMenu;
 			text.appendChild(orderit);
 		}
@@ -175,7 +169,7 @@ function ShowIndexContent(recommend, anima) {
 			orderit.type = "button";
 			orderit.className = "btn btn-default";
 			orderit.style = "width:100%";
-			orderit.innerHTML = "加入購物車";
+			orderit.innerHTML = "加入訂餐車";
 			orderit.onclick = AddItemFromMenu;
 			text.appendChild(orderit);
 		}
@@ -273,7 +267,24 @@ function LoadGallery(server, dishid) {
 	xhttp.open("GET", server+'?mealid='+dishid, true);
   xhttp.send();
 }
-
+function UpdateCartCount() {
+	var cart = GetCookie("cart");
+	var ncart = document.getElementById("ncart");
+  if (cart == "") {
+		SetCookie("cart","",24);	
+		ncart.innerHTML = 0;
+	} else {
+		cart = JSON.parse(cart);
+		ncart.innerHTML = (cart.length/3);
+	}
+}
+function TotalPayment(cart) {
+	var total = 0.00;
+	for (var i = 2; i < cart.length; i+=3) {
+		total += parseInt(cart[i]);
+	}
+	document.getElementById("total").innerHTML = "CDN$ " + total.toFixed(2);
+}
 function AddItemFromMenu() {
 	var price = this.parentNode.getElementsByClassName("price")[0].innerHTML;
 	var itemid = this.parentNode.getElementsByClassName("itemid")[0].innerHTML;
@@ -286,5 +297,76 @@ function AddItemFromMenu() {
 		cart = cart.concat([mname,itemid,price]);
 	}
 	SetCookie("cart", JSON.stringify(cart),24);
-	PageSetup();
+	UpdateCartCount();
 }
+function AddItemFromDetail() {
+	var price = document.getElementById("price").innerHTML;
+	var itemid = document.getElementById("itemid").innerHTML;
+	var mname = document.getElementById("mname").innerHTML;
+	var cart = GetCookie("cart");
+	if (cart == "") {
+		cart = [mname,itemid,price];
+	} else {
+		cart = JSON.parse(cart);		
+		cart = cart.concat([mname,itemid,price]);
+	}
+	SetCookie("cart", JSON.stringify(cart),24);
+	UpdateCartCount();
+}
+
+function EmptyCart() {
+	SetCookie("cart","",24);
+	document.getElementById("cartt").innerHTML = '<p style="font-size:20px;" class="w3-center">訂餐車已清空</p>';
+	TotalPayment([]);
+	UpdateCartCount();
+}
+
+function RemoveItem(obj) {
+	var idx = parseInt(obj.name);
+	var items = JSON.parse(GetCookie("cart"));
+	console.log(items);
+	items.splice(idx,3);
+	console.log(items);
+	if (items.length != 0) {
+		SetCookie("cart",JSON.stringify(items),24);
+	} else {
+		SetCookie("cart","",24);
+	}
+	ShowCartContent();
+	UpdateCartCount();
+	TotalPayment(items);
+}
+
+function ShowCartContent() {
+	var cartt = document.getElementById("cartt");
+	var items = GetCookie("cart");
+	if (items == "") {
+		cartt.innerHTML = '<p style="font-size:20px;" class="w3-center">您的訂餐車沒有餐品</p>';
+		TotalPayment([]);
+		return;
+	}
+	items = JSON.parse(items);
+	cartt.innerHTML = "";
+	var tbl = document.createElement("table");
+	tbl.className = "w3-table";
+	var tbh = document.createElement("thead");
+	tbh.innerHTML = "<tr><th>餐品名稱</th><th>價格</th></tr>"
+	var tblb = document.createElement("tbody");
+	tblb.style = "font-size:20px;"
+	//tbl.appendChild(tbh);
+	tbl.appendChild(tblb);
+	cartt.appendChild(tbl);
+	for (var i = 0; i < items.length; i+=3) {
+		var row = document.createElement("tr");
+		row.innerHTML = "<td>"+items[i]+"</td>"+"<td>CDN$ "+items[i+2]+"</td>";
+		var rmbtn = document.createElement("td");
+		rmbtn.innerHTML = '<span style="cursor:pointer;" class="fa fa-times w3-closebtn"></span>';
+		rmbtn.name = i;
+		rmbtn.onclick = (function(td){return function(){RemoveItem(td);}})(rmbtn);
+		row.appendChild(rmbtn);
+		tblb.appendChild(row);
+	}
+	UpdateCartCount();
+	TotalPayment(items);
+}
+
