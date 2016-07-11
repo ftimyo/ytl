@@ -23,7 +23,7 @@ MEDIA_URL = '/media/'
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'o)_hp8neqk7-d2^m^*9+n@bee^*7^rg1cz_h&kp9t*y#7@1g99'
+SECRET_KEY = 'fuo$utd-pz$m#afkuqrlg&_aex&hnym33%w92wm+8njh3r@)y*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'deal',
     'django_cleanup',
     'redactor',
+    'django_ajax',
 ]
 
 MIDDLEWARE_CLASSES = [

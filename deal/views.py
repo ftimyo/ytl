@@ -1,9 +1,11 @@
 import json
+from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Meal, MealPhoto, MealCatalog, MealTheme, css_themes
 from django.core.urlresolvers import reverse
+from django_ajax.decorators import ajax
 
 # Create your views here.
 
@@ -142,3 +144,9 @@ def ContactPage(request):
         i = theme[0].themecolor
         context.update({'colorcss':'deal/'+css_themes[i]+'.css'})
     return render(request, 'deal/contact.html', context)
+@ajax
+def SubmitOrderJSON(request):
+    data = dict()
+    for key, values in request.POST.lists():
+        data[key] = values
+    return data

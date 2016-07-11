@@ -415,3 +415,16 @@ function ShowCartContent() {
 	UpdateCartCount();
 	TotalPayment(items);
 }
+
+function PostSubmitOrder(items) {
+	console.log(items);
+}
+function SubmitOrder(url) {
+	var cart = GetCookie('cart');
+	if (cart == "") {
+		window.alert("您的訂餐車內沒有餐品!");
+		return;
+	}
+	cart = JSON.parse(cart);
+	ajaxPost(url,cart,PostSubmitOrder);
+}

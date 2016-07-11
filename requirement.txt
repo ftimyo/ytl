@@ -1,4 +1,5 @@
 Django==1.9.7
 django-cleanup==0.4.2
 django-wysiwyg-redactor==0.4.9
+djangoajax==2.3.6
 Pillow==3.2.0
