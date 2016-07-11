@@ -178,3 +178,39 @@ class MealPhoto(models.Model):
         return self.name
     class Meta:
         ordering = ('-pub_time',)
+
+class OrderBook(models.Model):
+    address = models.CharField('送餐地址',max_length=128,blank=True,null=True);
+    person = models.CharField('收貨人',max_length=128);
+    contact = models.CharField('收貨人聯繫方式',max_length=128);
+    soptions = zip(range(0,4), ['等待確認','等待處理','處理中','完成'])
+    status = models.IntegerField('訂單狀態', default = 0, choices=soptions)
+    typeoptions = zip(range(0,2), ['自行取餐','送餐服務'])
+    ordertype = models.IntegerField('訂單類型', default = 0, choices=typeoptions)
+    desc = RedactorField(verbose_name='備註', redactor_options={'focus': 'true'},
+            allow_file_upload=False, allow_image_upload=False)
+    taxrate = models.FloatField('稅率',default=0.0)
+    pub_time = models.DateTimeField('訂單創建時間', auto_now_add=True)
+    update_time = models.DateTimeField('訂單確認時間', auto_now=True)
+    dishes = models.ManyToManyField(Meal,verbose_name='訂購餐品',
+            through='Purchase',related_name='dishes')
+    def totalpayment(self):
+        ar = self.dishes.all()
+        ret = 0.0
+        for x in ar:
+            ret += x.price * x.amount
+        ret *= (1+self.taxrate)
+        return "{:5.2f}".format(ret)
+    totalpayment.short_description = "總計(CDN$)"
+    totalpayment.allow_tags = True
+    def __str__(self):
+        return self.person;
+    class Meta:
+        ordering = ('-pub_time',)
+
+class Purchase(models.Model):
+    dish = models.ForeignKey(Meal, verbose_name='餐品', on_delete=models.CASCADE)
+    transaction = models.ForeignKey(OrderBook, verbose_name='訂單',on_delete=models.CASCADE)
+    name = models.CharField('餐品名', max_length=100)
+    price = models.DecimalField('價格(CDN$)',max_digits=5,decimal_places=2)
+    amount = models.IntegerField('餐品數量', default = 1)

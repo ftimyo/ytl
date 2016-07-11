@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import MealCatalog, MealPhoto, Meal, MealTheme
+from .models import MealCatalog, MealPhoto, Meal, MealTheme, OrderBook, Purchase
 
 # Register your models here.
 @admin.register(MealCatalog)
@@ -69,3 +69,23 @@ class MealThemeAdmin(admin.ModelAdmin):
     list_display = ['title','name','email','pub_time','update_time']
     list_filter = ['pub_time', 'update_time']
     search_fields = ['name', 'title', 'desc']
+
+class Mealinline(admin.TabularInline):
+    model = Purchase
+    extra = 1
+    def has_change_permission(self, request, obj=None):
+        return False
+    def has_add_permission(self, request, obj=None):
+        return False
+    def has_delete_permission(self, request, obj=None):
+        return False
+@admin.register(OrderBook)
+class OrderBookAdmin(admin.ModelAdmin):
+    fieldsets = [
+            ('訂單信息',{'fields':('address','person','contact','status','ordertype','desc','taxrate','pub_time','update_time')}),
+            ]
+    readonly_fields = ['pub_time','update_time',]
+    inlines = (Mealinline,)
+    list_display = ['person','status','ordertype','totalpayment','pub_time',]
+    list_filter = ['pub_time', 'update_time','status','ordertype']
+    search_fields = ['desc', 'person', 'contact','address']
