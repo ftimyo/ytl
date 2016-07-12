@@ -3,7 +3,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Meal, MealPhoto, MealCatalog, MealTheme, css_themes
+from .models import Meal, MealPhoto, MealCatalog, MealTheme
+from .models import css_themes, soptionst, typeoptionst
 from .models import OrderBook, Purchase
 from django.core.urlresolvers import reverse
 from django_ajax.decorators import ajax
@@ -147,13 +148,43 @@ def ContactPage(request):
     return render(request, 'deal/contact.html', context)
 @ajax
 def SubmitOrderJSON(request):
-    data = dict()
+    data = {}
+    items = []
     ordersubmission = OrderBook.objects.create(address='送餐地址',
             person='收貨人名稱',contact='收貨人聯繫方式',desc='備註',)
+    desc = ""
+    deliveryfee = float(0)
     for key, values in request.POST.lists():
-        odname, odprice, odamount, oitemid = values
-        odish = Meal.objects.get(pk = int(oitemid))
-        purchase = Purchase(dish=odish,transaction=ordersubmission,name=odname,
-                price=float(odprice),amount=int(odamount))
+        #check submission
+        try:
+            odname, odprice, odamount, oitemid = values
+            odprice = float(odprice)
+            oitemid = int(oitemid)
+            odamount = int(odamount)
+            odish = Meal.objects.get(pk = oitemid)
+        except:
+            return data
+        if odprice != odish.price or odamount <= 0 or odname != odish.zhtitle:
+            return data
+        #check finished
+        purchase = Purchase(dish=odish,transaction=ordersubmission,name=odname, price=float(odprice),amount=int(odamount))
         purchase.save()
+        desc += odname + ' '+ u'\u00D7' + str(odamount) + ' ------------- CDN$ ' + str(odprice*odamount) + '<br/>'
+        items.append([odname,odprice,odamount,oitemid])
+
+    ordersubmission.desc = desc
+    ordersubmission.save()
+    desc = ""
+    theme = MealTheme.objects.all()[:1]
+    if theme:
+        deliveryfee = theme[0].deliveryfee
+        desc = theme[0].deliverydesc
+
+    data['deliveryfee'] = deliveryfee
+    data['deliverydesc'] = desc
+    data['total'] = ordersubmission.totalpayment()
+    data['items'] = items
+    data['orderid'] = ordersubmission.id
+    data['sopt'] = soptionst[ordersubmission.status]
+    data['topt'] = zip(range(0,len(typeoptionst)),typeoptionst)
     return data

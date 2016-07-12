@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from redactor.fields import RedactorField
+from decimal import Decimal
 import django
 import hashlib
 import datetime
@@ -32,6 +33,10 @@ class MealTheme(models.Model):
     title = models.CharField('關於我們標題(必填):', max_length=100, help_text='限50字')
     desc = RedactorField(verbose_name='關於我們的故事(必填):', redactor_options={'focus': 'true'},
             allow_file_upload=False, allow_image_upload=False)
+    deliverydesc = RedactorField(verbose_name='送餐說明(必填):', redactor_options={'focus': 'true'},
+            allow_file_upload=False, allow_image_upload=False)
+    taxrate = models.FloatField('稅率',default=0.0)
+    deliveryfee = models.DecimalField('送餐費(CDN$)',max_digits=5,decimal_places=2)
     name = models.CharField('暱稱(必填):', max_length=100, help_text='限50字')
     wechat = models.CharField('微信帳號(必填):', max_length=100, help_text='限50字')
     wechatqr = models.ImageField(verbose_name='微信QR碼圖片(必填)', upload_to=rename_wechatID)
@@ -193,6 +198,7 @@ class OrderBook(models.Model):
     desc = RedactorField(verbose_name='備註', redactor_options={'focus': 'true'},
             allow_file_upload=False, allow_image_upload=False)
     taxrate = models.FloatField('稅率',default=0.0)
+    deliveryfee = models.FloatField('送餐費',default=0.0)
     pub_time = models.DateTimeField('訂單創建時間', auto_now_add=True)
     update_time = models.DateTimeField('訂單確認時間', auto_now=True)
     dishes = models.ManyToManyField(Meal,verbose_name='訂購餐品',
@@ -203,6 +209,7 @@ class OrderBook(models.Model):
         for x in ar:
             v = django.apps.apps.get_model('deal','Purchase').objects.get(transaction=self,dish=x)
             ret += float(v.price) * v.amount
+        ret += self.deliveryfee
         ret *= (1+self.taxrate)
         return "{:5.2f}".format(ret)
     totalpayment.short_description = "總計(CDN$)"

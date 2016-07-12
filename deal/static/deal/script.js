@@ -267,7 +267,7 @@ function LoadGallery(server, dishid) {
 	xhttp.open("GET", server+'?mealid='+dishid, true);
   xhttp.send();
 }
-/*{key:[name,price,cnt],}*/
+/*{key:[name,price,cnt,itemid],}*/
 function UpdateCartCount() {
 	var cart = GetCookie("cart");
 	var ncart = document.getElementById("ncart");
@@ -418,6 +418,85 @@ function ShowCartContent() {
 
 function PostSubmitOrder(items) {
 	console.log(items);
+	var orderid = items['orderid'];
+	var sopt = items['sopt']; var topt = items['topt'];var total = parseFloat(items['total']);
+	var deliveryfee = parseFloat(items['deliveryfee']);var deliverydesc = items['deliverydesc'];
+	if (!deliveryfee) {deliveryfee = 0.0;deliverydesc="";}
+	items = items['items'];
+	if (!(orderid && items)) {
+		return;
+	} 
+	pane = document.getElementById('window');
+	pane.innerHTML = "";
+	var title = document.createElement('h1');
+	title.className = 'w3-padding w3-center';title.innerHTML = '訂單信息確認';
+	var fd1 = document.createElement('h2');fd1.className = 'w3-padding';fd1.innerHTML = '訂單明細';
+	pane.appendChild(title);pane.appendChild(fd1);
+	var tbl = document.createElement('table');tbl.className = 'w3-table w3-animate-zoom w3-card-4 w3-bordered w3-hoverable w3-large';
+	pane.appendChild(tbl);
+	tbl.id="orderdetailt";
+	for (var v in items) {
+		v = items[v];
+		var tr = document.createElement('tr');tr.className = 'w3-animate-zoom';
+		tr.innerHTML = '<td>'+v[0] + '&times;' + v[2] +'</td>';
+		tr.innerHTML += '<td class="w3-right">CDN$' +(parseFloat(v[2])*parseFloat(v[1])).toFixed(2) + '</td>';
+		tbl.appendChild(tr);
+	}
+	var trt = document.createElement('tr');var trd = document.createElement('tr');trt.className = 'w3-animate-zoom';
+	trd.className = 'w3-animate-zoom';
+	trt.innerHTML = '<td><strong>總計</strong></td><td class="w3-right"><strong>CDN$<span id="totalf">'+total.toFixed(2)+'</span></strong></td>';
+	trd.innerHTML = '<td><em>送餐費</em></td><td class="w3-right"><em>CDN$'+deliveryfee.toFixed(2)+'</em></td>';
+	trd.style.display = 'none';tbl.appendChild(trd); tbl.appendChild(trt);
+	var fd2 = document.createElement('h2');fd2.className = 'w3-padding';fd2.innerHTML = '訂餐人信息';
+	pane.appendChild(fd2);
+	var form = document.createElement('form');
+	form.className = 'w3-container w3-padding w3-card-4 w3-animate-zoom';
+	pane.appendChild(form);
+	var iotp = document.createElement('p');iotp.className = "w3-animate-zoom";
+	var iot = document.createElement('select');
+	iot.id = "topt"; iot.name = 'topt';iot.className = 'form-control';
+	var iotl = document.createElement('label');iotl.htmlFor = iot.id;
+	iotl.innerHTML = deliverydesc;iotl.className="w3-animate-zoom";iotl.style.display='none';
+	for (var i = 0; i < topt.length; ++i){
+		var iopt = document.createElement('option');
+		iopt.value = parseInt(topt[i][0]);
+		iopt.innerHTML = topt[i][1];
+		iot.appendChild(iopt);
+	}
+	iotp.appendChild(iotl); iotp.appendChild(iot); form.appendChild(iotp);
+	var inamep = document.createElement('p'); inamep.className = "w3-animate-zoom";
+	var iname = document.createElement('input');
+	iname.id = 'iname';iname.placeholder = '訂餐人姓名';iname.type = 'text';iname.style = 'width:100%';
+	iname.className = "w3-input w3-padding";iname.maxlength="100";
+	inamep.appendChild(iname); form.appendChild(inamep);
+	var iaddrp = document.createElement('p');iaddrp.style.display = 'none';iaddrp.className = "w3-animate-zoom";
+	var iaddr = document.createElement('input');
+	iaddr.id = 'iaddr';iaddr.placeholder = '送餐地址';iaddr.type = 'text';iaddr.style = 'width:100%;';
+	iaddr.className = "w3-input w3-padding";iaddr.maxlength="128";
+	iaddrp.appendChild(iaddr); form.appendChild(iaddrp);
+	var icontactp = document.createElement('p');icontactp.className = "w3-animate-zoom";
+	var icontact = document.createElement('input');
+	icontact.id = 'icontact';icontact.placeholder = '訂餐人聯繫方式';
+	icontact.type = 'text';icontact.style = 'width:100%;';
+	icontact.className = "w3-input w3-padding"; 
+	icontactp.appendChild(icontact); form.appendChild(icontactp);
+	iot.onchange = (function(obj1,obj2,obj4,obj5){return function(){
+		if(obj1.value == topt[0][0]){obj2.style.display='none';obj5.style.display='none';
+			obj4.style.display='none';document.getElementById('totalf').innerHTML=total.toFixed(2);}
+		else{obj2.style.display='block';obj5.style.display='block';
+			obj4.style.display='table-row';document.getElementById('totalf').innerHTML=(total+deliveryfee).toFixed(2);}
+	};})(iot,iaddrp,trd,iotl);
+	var idescp = document.createElement('p');idescp.className = "w3-animate-zoom";
+	var idesc = document.createElement('input');
+	idesc.id = 'idesc';idesc.placeholder = '備註';
+	idesc.type = 'text';idesc.style = 'width:100%;';
+	idesc.className = "w3-input w3-padding";idesc.maxlength="128";
+	idescp.appendChild(idesc); form.appendChild(idescp);
+	var containb = document.createElement('div');containb.className = "w3-center w3-padding";
+	containb.innerHTML = "<br/>"; pane.appendChild(containb);
+	var submitb = document.createElement('button');submitb.type='button';
+	submitb.className = "btn btn-default";submitb.innerHTML = "確認訂單";
+	containb.appendChild(submitb);
 }
 function SubmitOrder(url) {
 	var cart = GetCookie('cart');
@@ -426,6 +505,5 @@ function SubmitOrder(url) {
 		return;
 	}
 	cart = JSON.parse(cart);
-	console.log(cart);
 	ajaxPost(url,cart,PostSubmitOrder);
 }

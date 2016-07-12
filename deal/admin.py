@@ -63,6 +63,7 @@ admin.site.register(Meal, MealAdmin)
 class MealThemeAdmin(admin.ModelAdmin):
     fieldsets = [
             ('主題設置',{'fields':('sitetitle','brand','themecolor',)}),
+            ('送餐說明和稅率',{'fields':('deliverydesc','deliveryfee','taxrate',)}),
             ('關於我們',{'fields':('title','desc')}),
             ('聯繫方式',{'fields':('name','wechat','wechatqr','facebook','twitter','weibo','tel','email')}),
             ]
