@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Meal, MealPhoto, MealCatalog, MealTheme, css_themes
+from .models import OrderBook, Purchase
 from django.core.urlresolvers import reverse
 from django_ajax.decorators import ajax
 
@@ -147,6 +148,12 @@ def ContactPage(request):
 @ajax
 def SubmitOrderJSON(request):
     data = dict()
+    ordersubmission = OrderBook.objects.create(address='送餐地址',
+            person='收貨人名稱',contact='收貨人聯繫方式',desc='備註',)
     for key, values in request.POST.lists():
-        data[key] = values
+        odname, odprice, odamount, oitemid = values
+        odish = Meal.objects.get(pk = int(oitemid))
+        purchase = Purchase(dish=odish,transaction=ordersubmission,name=odname,
+                price=float(odprice),amount=int(odamount))
+        purchase.save()
     return data

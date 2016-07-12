@@ -2,12 +2,15 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from redactor.fields import RedactorField
+import django
 import hashlib
 import datetime
 import os
 
 css_themes = ['cerulean','cosmo','cyborg','darkly','flatly','journal','lumen','paper','readable',
     'sandstone','simplex','slate','spacelab','superhero','united','yeti']
+soptionst = ['等待確認','等待處理','處理中','完成']
+typeoptionst = ['自行取餐','送餐服務']
 def rename_wechatID(instance, filename):
     h = instance.md5sum
     basename, ext = os.path.splitext(filename)
@@ -183,9 +186,9 @@ class OrderBook(models.Model):
     address = models.CharField('送餐地址',max_length=128,blank=True,null=True);
     person = models.CharField('收貨人',max_length=128);
     contact = models.CharField('收貨人聯繫方式',max_length=128);
-    soptions = zip(range(0,4), ['等待確認','等待處理','處理中','完成'])
+    soptions = zip(range(0,len(soptionst)), soptionst)
     status = models.IntegerField('訂單狀態', default = 0, choices=soptions)
-    typeoptions = zip(range(0,2), ['自行取餐','送餐服務'])
+    typeoptions = zip(range(0,len(typeoptionst)), typeoptionst)
     ordertype = models.IntegerField('訂單類型', default = 0, choices=typeoptions)
     desc = RedactorField(verbose_name='備註', redactor_options={'focus': 'true'},
             allow_file_upload=False, allow_image_upload=False)
@@ -198,7 +201,8 @@ class OrderBook(models.Model):
         ar = self.dishes.all()
         ret = 0.0
         for x in ar:
-            ret += x.price * x.amount
+            v = django.apps.apps.get_model('deal','Purchase').objects.get(transaction=self,dish=x)
+            ret += float(v.price) * v.amount
         ret *= (1+self.taxrate)
         return "{:5.2f}".format(ret)
     totalpayment.short_description = "總計(CDN$)"

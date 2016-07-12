@@ -297,13 +297,13 @@ function AddItemFromMenu() {
 	var cart = GetCookie("cart");
 	if (cart == "") {
 		cart = {};
-		cart[itemid] = [mname,price,1];
+		cart[itemid] = [mname,price,1,parseInt(itemid)];
 	} else {
 		cart = JSON.parse(cart);
 		if (cart[itemid]) {
 			cart[itemid][2] += 1;
 		} else {
-			cart[itemid] = [mname,price,1];
+			cart[itemid] = [mname,price,1,parseInt(itemid)];
 		}
 	}
 	SetCookie("cart", JSON.stringify(cart),24);
@@ -318,13 +318,13 @@ function AddItemFromDetail() {
 	var cart = GetCookie("cart");
 	if (cart == "") {
 		cart = {};
-		cart[itemid] = [mname,price,1];
+		cart[itemid] = [mname,price,1,parseInt(itemid)];
 	} else {
 		cart = JSON.parse(cart);
 		if (cart[itemid]) {
 			cart[itemid][2] += 1;
 		} else {
-			cart[itemid] = [mname,price,1];
+			cart[itemid] = [mname,price,1,parseInt(itemid)];
 		}
 	}
 	SetCookie("cart", JSON.stringify(cart),24);
@@ -426,5 +426,6 @@ function SubmitOrder(url) {
 		return;
 	}
 	cart = JSON.parse(cart);
+	console.log(cart);
 	ajaxPost(url,cart,PostSubmitOrder);
 }
