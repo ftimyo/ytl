@@ -12,6 +12,7 @@ from django_ajax.decorators import ajax
 from decimal import *
 from django.core.mail import send_mail
 from django.template import loader
+from django.contrib.auth.models import User
 
 # Create your views here.
 
@@ -216,11 +217,14 @@ def PlaceOrderJSON(request):
     deliveryfee = float(0)
     taxrate = float(0)
     theme = MealTheme.objects.all()[:1]
-    email = None
+    staff = User.objects.filter(is_staff=True)
+    email = []
+    for v in staff:
+        email.append(v.email)
+
     pickup = ""
     pickuplink = ""
     if theme:
-        email = theme[0].email
         deliveryfee = theme[0].deliveryfee
         pickup = theme[0].address
         pickuplink = theme[0].addresslink
@@ -266,11 +270,11 @@ def PlaceOrderJSON(request):
     mailcom['statusr'] = request.build_absolute_uri(reverse('deal:oproc',args=[str(orderid),str(len(soptionst))]))
 
     mkmessage = loader.render_to_string('deal/cookemail.html',mailcom)
-    if email:
+    if len(email) != 0:
         send_mail(subject='新的訂單 '+ data['orderid'],
                 message=mkmessage,
                 from_email="",
-                recipient_list=[email,],
+                recipient_list= email,
                 html_message=mkmessage,
                 fail_silently=False,)
     return data
