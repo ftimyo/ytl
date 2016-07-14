@@ -65,7 +65,7 @@ class MealThemeAdmin(admin.ModelAdmin):
             ('主題設置',{'fields':('sitetitle','brand','themecolor',)}),
             ('送餐說明和稅率',{'fields':('deliverydesc','deliveryfee','taxrate',)}),
             ('關於我們',{'fields':('title','desc')}),
-            ('聯繫方式',{'fields':('name','wechat','wechatqr','facebook','twitter','weibo','tel','email')}),
+            ('聯繫方式',{'fields':('address','addresslink','name','wechat','wechatqr','facebook','twitter','weibo','tel','email')}),
             ]
     list_display = ['title','name','email','pub_time','update_time']
     list_filter = ['pub_time', 'update_time']

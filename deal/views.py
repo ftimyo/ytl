@@ -174,19 +174,23 @@ def SubmitOrderJSON(request):
         #check finished
         purchase = Purchase(dish=odish,transaction=ordersubmission,name=odname, price=float(odprice),amount=int(odamount))
         purchase.save()
-        desc += odname + ' '+ u'\u00D7' + str(odamount) + ' ------------- CDN$ ' + str(odprice*odamount) + '<br/>'
         items.append([odname,odprice,odamount,oitemid])
 
-    ordersubmission.desc = desc
     ordersubmission.save()
     desc = ""
     theme = MealTheme.objects.all()[:1]
+    pickup = ""
+    pickuplink = ""
     if theme:
+        pickup = theme[0].address
+        pickuplink = theme[0].addresslink
         deliveryfee = theme[0].deliveryfee
         desc = theme[0].deliverydesc
 
     data['deliveryfee'] = deliveryfee
     data['deliverydesc'] = desc
+    data['pickup'] = pickup
+    data['pickuplink'] = pickuplink
     data['total'] = ordersubmission.totalpayment()
     data['items'] = items
     data['orderid'] = ordersubmission.id
@@ -213,9 +217,13 @@ def PlaceOrderJSON(request):
     taxrate = float(0)
     theme = MealTheme.objects.all()[:1]
     email = None
+    pickup = ""
+    pickuplink = ""
     if theme:
         email = theme[0].email
         deliveryfee = theme[0].deliveryfee
+        pickup = theme[0].address
+        pickuplink = theme[0].addresslink
         taxrate = theme[0].taxrate
 
     name, contact, desc, addr = data['name'], data['contact'], data['desc'],data['addr']
@@ -248,6 +256,8 @@ def PlaceOrderJSON(request):
     mailcom['items'] = items
     data['total'] = trans.totalpayment()
     data['orderid'] = "%015d"%orderid
+    data['pickup'] = pickup
+    data['pickuplink'] = pickuplink
     mailcom['orderid'] = data['orderid']
     link = []
     for i in range(2,len(soptionst)):

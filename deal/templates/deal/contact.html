@@ -28,29 +28,44 @@
 	  <li id="wechat" class="w3-padding-16"
 			onclick="this.style.cursor='auto';document.getElementById('qr').style.display='block';
 			document.getElementById('cname').style.display='none';">
-			<span class="fa fa-wechat" style="font-size:48px;"></span>
-			<span style="font-size:48px;float:right;">{{one.wechat}}</span>
+			<span class="fa fa-wechat" style="font-size:32px;"></span>
+			<p style="font-size:16px;">{{one.wechat}}</p>
 		</li>
 	  <li class="w3-padding-16">
-			<span class="glyphicon glyphicon-phone" style="font-size:48px;"></span>
-			<span style="font-size:48px;float:right;">{{one.tel}}</span>
+			<span class="fa fa-phone" style="font-size:32px;"></span>
+			<p style="font-size:16px;">{{one.tel}}</p>
 		</li>
 	  <li class="w3-padding-16">
-			<span class="glyphicon glyphicon-envelope" style="font-size:48px;"></span>
-			<span style="font-size:48px;float:right;">{{one.email}}</span>
+			<span class="fa fa-envelope" style="font-size:32px;"></span>
+			<p style="font-size:16px;">{{one.email}}</p>
 		</li>
-	  <li class="w3-padding-16">
-			<span class="fa fa-weibo" style="font-size:48px;"></span>
-			<span style="font-size:48px;float:right;">{{one.weibo}}</span>
+		{%if one.weibo%}
+	  <li class="w3-padding-16" style="cursor:pointer;"
+			onclick="window.open('{{one.weibo}}')">
+			<span class="fa fa-weibo" style="font-size:32px;"></span>
+			<p style="font-size:16px;">{{one.weibo}}</p>
 		</li>
-	  <li class="w3-padding-16">
-			<span class="fa fa-facebook" style="font-size:48px;"></span>
-			<span style="font-size:48px;float:right;">{{one.facebook}}</span>
+		{%endif%}
+		{%if one.facebook%}
+	  <li class="w3-padding-16" style="cursor:pointer;"
+			onclick="window.open('{{one.facebook}}')">
+			<span class="fa fa-facebook" style="font-size:32px;"></span>
+			<p style="font-size:16px;">{{one.facebook}}</p>
 		</li>
-	  <li class="w3-padding-16">
-			<span class="fa fa-twitter" style="font-size:48px;"></span>
-			<span style="font-size:48px;float:right;">{{one.twitter}}</span>
+		{%endif%}
+		{%if one.twitter%}
+	  <li class="w3-padding-16" style="cursor:pointer;"
+			onclick="window.open('{{one.twitter}}')">
+			<span class="fa fa-twitter" style="font-size:32px;"></span>
+			<p style="font-size:16px;">{{one.twitter}}</p>
 		</li>
+		{%endif%}
+		{%if one.address and one.addresslink%}
+		<li class="w3-padding-16" style="cursor:pointer;" onclick="window.open('{{one.addresslink}}')">
+			<span class="fa fa-car" style="font-size:32px;"></span>
+			<p style="font-size:16px;">{{one.address}}</p>
+		</li>
+		{%endif%}
 	</ul>
 </div>
 {%endfor%}

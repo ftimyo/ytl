@@ -454,6 +454,12 @@ function OrderConfirmation(data) {
 		sheet.innerHTML += '<hr/>'; var tbl4 = document.createElement('table');tbl4.className = 'w3-table w3-small';
 		sheet.appendChild(tbl4);
 		tbl4.innerHTML = '<tr><td class="w3-left"><strong>送餐地址</strong></td></tr><tr><td class="w3-left"><strong>'+data['addr']+'</strong></td></tr>';
+	} else {
+		if (data['pickup'] != "" && data['pickuplink'] != "") {
+			sheet.innerHTML += '<hr/>'; var tbl4 = document.createElement('table');tbl4.className = 'w3-table w3-small';
+			sheet.appendChild(tbl4);
+			tbl4.innerHTML = '<tr><td class="w3-left"><strong>取餐地址</strong></td></tr><tr><td class="w3-left"><a href="'+data['pickuplink']+'" target="_blank"><strong>'+data['pickup']+'</strong></a></td></tr>';
+		}
 	}
 	var btn = document.createElement('input');btn.className = "btn btn-default";btn.value = "打印訂單";
 	sheet.innerHTML += '<hr/>'; sheet.appendChild(btn);
@@ -482,6 +488,7 @@ function PostSubmitOrder(items, url) {
 	var orderid = items['orderid'];
 	var sopt = items['sopt']; var topt = items['topt'];var total = parseFloat(items['total']);
 	var deliveryfee = parseFloat(items['deliveryfee']);var deliverydesc = items['deliverydesc'];
+	var pickup = items['pickup']; var pickuplink = items['pickuplink'];
 	if (!deliveryfee) {deliveryfee = 0.0;deliverydesc="";}
 	items = items['items'];
 	if (!(orderid && items)) {
@@ -517,14 +524,17 @@ function PostSubmitOrder(items, url) {
 	var iot = document.createElement('select');
 	iot.id = "topt"; iot.name = 'topt';iot.className = 'form-control';
 	var iotl = document.createElement('label');iotl.htmlFor = iot.id;
+	var iotl2 = document.createElement('label');iotl2.htmlFor = iot.id;
 	iotl.innerHTML = deliverydesc;iotl.className="w3-animate-zoom";iotl.style.display='none';
+	iotl2.innerHTML = '<h5>取餐地址</h5><p><a class="w3-padding w3-center" target="_blank" href="'+pickuplink+'">'+pickup+'</a></p>';
+	iotl2.className="w3-animate-zoom";iotl2.style.display='block';
 	for (var i = 0; i < topt.length; ++i){
 		var iopt = document.createElement('option');
 		iopt.value = parseInt(topt[i][0]);
 		iopt.innerHTML = topt[i][1];
 		iot.appendChild(iopt);
 	}
-	iotp.appendChild(iotl); iotp.appendChild(iot); form.appendChild(iotp);
+	iotp.appendChild(iotl);iotp.appendChild(iotl2);iotp.appendChild(iot); form.appendChild(iotp);
 	var inamep = document.createElement('p'); inamep.className = "w3-animate-zoom";
 	var iname = document.createElement('input');iname.required = true;
 	iname.id = 'iname';iname.placeholder = '訂餐人姓名';iname.type = 'text';iname.style.width = '100%';
@@ -550,12 +560,12 @@ function PostSubmitOrder(items, url) {
 		if (obj.value != "") {
 		obj.parentNode.className = "w3-animate-zoom";}};})(icontact);
 	icontactp.appendChild(icontact); form.appendChild(icontactp);
-	iot.onchange = (function(obj1,obj2,obj4,obj5){return function(){
-		if(obj1.value == topt[0][0]){obj2.style.display='none';obj5.style.display='none';
+	iot.onchange = (function(obj1,obj2,obj3,obj4,obj5){return function(){
+		if(obj1.value == topt[0][0]){obj2.style.display='none';obj5.style.display='none';obj3.style.display='block';
 			obj4.style.display='none';document.getElementById('totalf').innerHTML=total.toFixed(2);}
-		else{obj2.style.display='block';obj5.style.display='block';
+		else{obj2.style.display='block';obj5.style.display='block';obj3.style.display='none';
 			obj4.style.display='table-row';document.getElementById('totalf').innerHTML=(total+deliveryfee).toFixed(2);}
-	};})(iot,iaddrp,trd,iotl);
+	};})(iot,iaddrp,iotl2,trd,iotl);
 	var idescp = document.createElement('p');idescp.className = "w3-animate-zoom";
 	var idesc = document.createElement('input');
 	idesc.id = 'idesc';idesc.placeholder = '備註';

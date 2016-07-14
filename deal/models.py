@@ -26,6 +26,8 @@ def rename_wechatID(instance, filename):
     return os.path.join('wechatID', h[0:1], h[1:2], h + ext.lower())
 
 class MealTheme(models.Model):
+    address = models.CharField('地址:', max_length=100, help_text='限50字',blank=True,null=True)
+    addresslink = models.CharField('Google Map Link:', max_length=200,blank=True,null=True)
     sitetitle = models.CharField('網站標題(必填):', max_length=100, help_text='限50字')
     brand = models.CharField('品牌名稱(必填):', max_length=100, help_text='限50字')
     doptions = zip(range(0,len(css_themes)), css_themes)
