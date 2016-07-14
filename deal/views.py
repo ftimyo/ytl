@@ -9,6 +9,7 @@ from .models import OrderBook, Purchase
 from django.core.urlresolvers import reverse
 from django_ajax.decorators import ajax
 from decimal import *
+from django.core.mail import send_mail
 
 # Create your views here.
 
@@ -207,7 +208,9 @@ def PlaceOrderJSON(request):
     deliveryfee = float(0)
     taxrate = float(0)
     theme = MealTheme.objects.all()[:1]
+    email = None
     if theme:
+        email = theme[0].email
         deliveryfee = theme[0].deliveryfee
         taxrate = theme[0].taxrate
 
@@ -239,4 +242,10 @@ def PlaceOrderJSON(request):
     data['items'] = items
     data['total'] = trans.totalpayment()
     data['orderid'] = "%015d"%orderid
+    if email:
+        send_mail(subject='New Order '+ data['orderid'],
+                message = trans.desc,
+                recipient_list=[email,],
+                html_message=trans.desc,
+                fail_silently=False,)
     return data

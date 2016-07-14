@@ -18,6 +18,12 @@ PROJECT_ROOT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), os.p
 MEDIA_ROOT = os.path.join(PROJECT_ROOT_PATH, 'media/')
 MEDIA_URL = '/media/'
 
+#EMAIL SETTING
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'p2508574447@gmail.com'
+EMAIL_HOST_PASSWORD = 'aj+tkpghiq'
+EMAIL_PORT = 587
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
