@@ -1,5 +1,6 @@
 import json
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -150,6 +151,7 @@ def ContactPage(request):
         context.update({'colorcss':'deal/'+css_themes[i]+'.css'})
     return render(request, 'deal/contact.html', context)
 @ajax
+@csrf_exempt
 def SubmitOrderJSON(request):
     data = {}
     items = []
@@ -196,6 +198,7 @@ data['otype'] = iot.value;data['name'] = iname.value;data['addr']=iaddr.value;
 data['contact']=icontact.value;data['desc']=idesc.value;data['orderid']=ioid;
 '''
 @ajax
+@csrf_exempt
 def PlaceOrderJSON(request):
     data = {}
     for key, value in request.POST.items():
