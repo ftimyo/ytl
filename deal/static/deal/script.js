@@ -357,7 +357,6 @@ function PlusItem(obj) {
 	var cntf = obj.getElementsByClassName('cnt')[0];
 	var cnt = parseInt(cntf.innerHTML);
 	++cnt;
-	console.log(cnt);
 	cntf.innerHTML = cnt;
 	var items = JSON.parse(GetCookie('cart'));
 	items[obj.name][2] = cnt;
@@ -369,7 +368,6 @@ function MinusItem(obj) {
 	var cnt = parseInt(cntf.innerHTML);
 	if (cnt <= 1) {ShowCartContent();return;}
 	--cnt;
-	console.log(cnt);
 	cntf.innerHTML = cnt;
 	var items = JSON.parse(GetCookie('cart'));
 	items[obj.name][2] = cnt;
@@ -391,7 +389,7 @@ function ShowCartContent() {
 	var tbl = document.createElement("table");
 	tbl.className = "w3-table";
 	var tbh = document.createElement("thead");
-	tbh.innerHTML = "<tr><th>餐品名稱</th><th class='w3-padding'>數量</th><th>價格</th><th class='w3-right'>移除</th></tr>";
+	tbh.innerHTML = "<tr><th>餐品名稱</th><th>數量</th><th>價格(CDN$)</th><th class='w3-right'>移除</th></tr>";
 	tbl.appendChild(tbh);
 	var tblb = document.createElement("tbody");
 	tblb.style = "font-size:20px;"
@@ -401,8 +399,8 @@ function ShowCartContent() {
 		var row = document.createElement("tr");
 		row.name = k;
 		row.innerHTML = "<td>"+items[k][0]+
-			"</td><td><a class='mc'><span class='fa fa-minus-circle'/></a><span class='w3-padding cnt'>"+
-			items[k][2]+"</span><a class='pc'><span class='fa fa-plus-circle'/></a></td><td>CDN$ "+
+			"</td><td><a class='mc'><span class='fa fa-minus-circle'/></a><span style='padding-left:5px;padding-right:5px;' class='cnt'>"+
+			items[k][2]+"</span><a class='pc'><span class='fa fa-plus-circle'/></a></td><td>"+
 			(items[k][1]*items[k][2]).toFixed(2)+"</td>";
 		row.getElementsByClassName("pc")[0].addEventListener('click',(function(td){return function(){PlusItem(td);}})(row),false);
 		row.getElementsByClassName("mc")[0].addEventListener('click',(function(td){return function(){MinusItem(td);}})(row),false);
@@ -416,8 +414,68 @@ function ShowCartContent() {
 	TotalPayment(items);
 }
 
-function PostSubmitOrder(items) {
-	console.log(items);
+function OrderConfirmation(data) {
+	var pane = document.getElementById('window');
+	pane.innerHTML = "";
+	if (data['attack']) {
+		pane.innerHTML = "<h1 class='w3-display-middle w3-center'>"+data['attack']+"</h1>";
+		return;
+	}
+	EmptyCart();
+	var sheet = document.createElement('div');sheet.className='w3-container w3-card-4 w3-padding w3-center';sheet.style.width="100%";
+	sheet.innerHTML += '<h2 class="w3-center">訂單號<br/>'+data['orderid']+'</h1>';
+	var oldtitle = $(document).prop('title');
+	$(document).prop('title', oldtitle+data['orderid']);
+	var tbl = document.createElement('table');tbl.className ='w3-table w3-large';
+	pane.appendChild(sheet);sheet.appendChild(tbl);var items = data['items'];
+	tbl.innerHTML += '<tr><th>餐品</th><th>數量</th><th class="w3-right">單價(CDN$)</th></tr>'
+	for (var i in items) {
+		var tr = document.createElement('tr');item = items[i];
+		tr.innerHTML = '<td>'+item[0]+'</td><td>&times;'+item[2]+'</td><td class="w3-right">'+item[1]+'</td>';
+		tbl.appendChild(tr);
+	}
+	sheet.innerHTML += '<hr/>';var tbl2 = document.createElement('table');tbl2.className = 'w3-table w3-large';
+	sheet.appendChild(tbl2);
+	if (parseInt(data['otype'])==1){
+		tbl2.innerHTML = '<tr><td><em>送餐費</em></td><td class="w3-right"><em>'+data['deliveryfee']+'</em></td></tr>';
+	}
+	tbl2.innerHTML += '<tr><td><strong>總計</strong></td><td class="w3-right"><strong>CDN$'+data['total']+'</strong></td></tr>';
+	sheet.innerHTML += '<hr/>';tbl3 = document.createElement('table');tbl3.className = 'w3-table w3-large';
+	sheet.appendChild(tbl3);
+	tbl3.innerHTML+='<tr><td><strong>訂餐人姓名</strong></td><td class="w3-right"><strong>'+data['name']+'</strong></td></tr>';
+	tbl3.innerHTML+='<tr><td><strong>訂餐人聯繫方式</strong></td><td class="w3-right"><strong>'+data['contact']+'</strong></td></tr>';
+	if (data['desc']) {
+		tbl3.innerHTML+='<tr><td><strong>備註</strong></td><td class="w3-right"><strong>'+data['desc']+'</strong></td></tr>';
+	}
+	if (parseInt(data['otype'])==1){
+		sheet.innerHTML += '<hr/>'; var tbl4 = document.createElement('table');tbl4.className = 'w3-table w3-small';
+		sheet.appendChild(tbl4);
+		tbl4.innerHTML = '<tr><td class="w3-left"><strong>送餐地址</strong></td></tr><tr><td class="w3-left"><strong>'+data['addr']+'</strong></td></tr>';
+	}
+	var btn = document.createElement('input');btn.className = "btn btn-default";btn.value = "打印訂單";
+	sheet.innerHTML += '<hr/>'; sheet.appendChild(btn);
+	btn.onclick = (function(x){return function(){
+		var old = x.style.display;
+		x.style.display='none';
+		window.print();
+		x.style.display=old}})(btn);
+}
+
+function PlaceOrder(ioid,iot,iname,iaddr,icontact,idesc) {
+	//check validity of the input
+	var again = false;
+	if (iname.value == ""){again = true;iname.parentNode.className='w3-border w3-border-red';}
+	if (icontact.value == ""){again = true;icontact.parentNode.className="w3-border w3-border-red";}
+	if (iot.value == 1 && iaddr.value == ""){again=true;iaddr.parentNode.className="w3-border w3-border-red";}
+	if (again) {window.alert('需要填寫紅色標註的信息!');return;}
+	var url = window.purlsafe;
+	if (url == "") {window.alert("網頁未能正常載入!");}
+	var data = {};
+	data['otype'] = iot.value;data['name'] = iname.value;data['addr']=iaddr.value;
+	data['contact']=icontact.value;data['desc']=idesc.value;data['orderid']=ioid;
+	ajaxPost(url,data,function(content){OrderConfirmation(content);});
+}
+function PostSubmitOrder(items, url) {
 	var orderid = items['orderid'];
 	var sopt = items['sopt']; var topt = items['topt'];var total = parseFloat(items['total']);
 	var deliveryfee = parseFloat(items['deliveryfee']);var deliverydesc = items['deliverydesc'];
@@ -450,7 +508,7 @@ function PostSubmitOrder(items) {
 	var fd2 = document.createElement('h2');fd2.className = 'w3-padding';fd2.innerHTML = '訂餐人信息';
 	pane.appendChild(fd2);
 	var form = document.createElement('form');
-	form.className = 'w3-container w3-padding w3-card-4 w3-animate-zoom';
+	form.className = 'w3-container w3-padding w3-card-4 w3-animate-zoom';form.id='orderform';
 	pane.appendChild(form);
 	var iotp = document.createElement('p');iotp.className = "w3-animate-zoom";
 	var iot = document.createElement('select');
@@ -465,20 +523,29 @@ function PostSubmitOrder(items) {
 	}
 	iotp.appendChild(iotl); iotp.appendChild(iot); form.appendChild(iotp);
 	var inamep = document.createElement('p'); inamep.className = "w3-animate-zoom";
-	var iname = document.createElement('input');
+	var iname = document.createElement('input');iname.required = true;
 	iname.id = 'iname';iname.placeholder = '訂餐人姓名';iname.type = 'text';iname.style = 'width:100%';
 	iname.className = "w3-input w3-padding";iname.maxlength="100";
+	iname.onchange = (function(obj){return function(){
+		if (obj.value != "") {
+		obj.parentNode.className = "w3-animate-zoom";}};})(iname);
 	inamep.appendChild(iname); form.appendChild(inamep);
 	var iaddrp = document.createElement('p');iaddrp.style.display = 'none';iaddrp.className = "w3-animate-zoom";
 	var iaddr = document.createElement('input');
 	iaddr.id = 'iaddr';iaddr.placeholder = '送餐地址';iaddr.type = 'text';iaddr.style = 'width:100%;';
 	iaddr.className = "w3-input w3-padding";iaddr.maxlength="128";
+	iaddr.onchange = (function(obj){return function(){
+		if (obj.value != "") {
+		obj.parentNode.className = "w3-animate-zoom";}};})(iaddr);
 	iaddrp.appendChild(iaddr); form.appendChild(iaddrp);
 	var icontactp = document.createElement('p');icontactp.className = "w3-animate-zoom";
 	var icontact = document.createElement('input');
-	icontact.id = 'icontact';icontact.placeholder = '訂餐人聯繫方式';
+	icontact.id = 'icontact';icontact.placeholder = '訂餐人聯繫方式';icontact.required=true;
 	icontact.type = 'text';icontact.style = 'width:100%;';
 	icontact.className = "w3-input w3-padding"; 
+	icontact.onchange = (function(obj){return function(){
+		if (obj.value != "") {
+		obj.parentNode.className = "w3-animate-zoom";}};})(icontact);
 	icontactp.appendChild(icontact); form.appendChild(icontactp);
 	iot.onchange = (function(obj1,obj2,obj4,obj5){return function(){
 		if(obj1.value == topt[0][0]){obj2.style.display='none';obj5.style.display='none';
@@ -494,9 +561,11 @@ function PostSubmitOrder(items) {
 	idescp.appendChild(idesc); form.appendChild(idescp);
 	var containb = document.createElement('div');containb.className = "w3-center w3-padding";
 	containb.innerHTML = "<br/>"; pane.appendChild(containb);
-	var submitb = document.createElement('button');submitb.type='button';
+	var submitb = document.createElement('button');submitb.type='submit';submitb.form = 'orderform';
 	submitb.className = "btn btn-default";submitb.innerHTML = "確認訂單";
 	containb.appendChild(submitb);
+	submitb.onclick = (function(obj0,obj1,obj2,obj3,obj4,obj5){return function(){
+		PlaceOrder(obj0,obj1,obj2,obj3,obj4,obj5);};})(orderid,iot,iname,iaddr,icontact,idesc);
 }
 function SubmitOrder(url) {
 	var cart = GetCookie('cart');
@@ -505,5 +574,6 @@ function SubmitOrder(url) {
 		return;
 	}
 	cart = JSON.parse(cart);
+	$("#cartview").modal('toggle');
 	ajaxPost(url,cart,PostSubmitOrder);
 }

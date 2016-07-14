@@ -209,7 +209,7 @@ class OrderBook(models.Model):
         for x in ar:
             v = django.apps.apps.get_model('deal','Purchase').objects.get(transaction=self,dish=x)
             ret += float(v.price) * v.amount
-        ret += self.deliveryfee
+        ret += float(self.deliveryfee)
         ret *= (1+self.taxrate)
         return "{:5.2f}".format(ret)
     totalpayment.short_description = "總計(CDN$)"

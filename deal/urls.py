@@ -11,5 +11,6 @@ urlpatterns = [
     url(r'^mealjson$',views.mealdetailJSON, name='detailJSON'), #AJAX
     url(r'^about$',views.AboutPage, name='about'), #PAGE
     url(r'^contact$',views.ContactPage, name='contact'), #PAGE
-    url(r'^submitorder',views.SubmitOrderJSON, name='submit') #AJAX
+    url(r'^submitorder',views.SubmitOrderJSON, name='submit'), #AJAX
+    url(r'^orderconfirm',views.PlaceOrderJSON, name='placeorder'), #AJAX
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

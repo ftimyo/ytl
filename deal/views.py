@@ -8,6 +8,7 @@ from .models import css_themes, soptionst, typeoptionst
 from .models import OrderBook, Purchase
 from django.core.urlresolvers import reverse
 from django_ajax.decorators import ajax
+from decimal import *
 
 # Create your views here.
 
@@ -187,4 +188,55 @@ def SubmitOrderJSON(request):
     data['orderid'] = ordersubmission.id
     data['sopt'] = soptionst[ordersubmission.status]
     data['topt'] = zip(range(0,len(typeoptionst)),typeoptionst)
+    return data
+'''
+data['otype'] = iot.value;data['name'] = iname.value;data['addr']=iaddr.value;
+data['contact']=icontact.value;data['desc']=idesc.value;data['orderid']=ioid;
+'''
+@ajax
+def PlaceOrderJSON(request):
+    data = {}
+    for key, value in request.POST.items():
+        data[key] = value
+    #check for attack
+    try:
+        otype,orderid = int(data['otype']), int(data['orderid'])
+    except:
+        return {'attack':'訂單確認失敗'}
+
+    deliveryfee = float(0)
+    taxrate = float(0)
+    theme = MealTheme.objects.all()[:1]
+    if theme:
+        deliveryfee = theme[0].deliveryfee
+        taxrate = theme[0].taxrate
+
+    name, contact, desc, addr = data['name'], data['contact'], data['desc'],data['addr']
+    if name == "" or contact == "":
+        return {'attack': '訂餐人信息缺失'}
+    if otype == 1 and addr == "":
+        return {'attack': '送餐地址信息缺失'}
+    try:
+        trans = OrderBook.objects.get(pk=orderid)
+    except:
+        return {'attack':'訂單確認失敗'}
+    trans.taxrate = taxrate
+    if otype == 1:
+        trans.deliveryfee = Decimal(str(deliveryfee))
+        trans.desc += '<em>送餐費</em> ------------- CDN${:5.2f}'.format(deliveryfee)+'<br/>'
+        data['deliveryfee'] = deliveryfee
+        trans.save()
+    trans.desc += '<strong>總計</strong> ------------- CDN$'+trans.totalpayment()+'<br/>'
+    trans.person,trans.contact,trans.address,trans.ordertype,trans.status = name,contact,addr,otype,1
+    if desc != "":
+        trans.desc += '備註:<br/>' + desc + '<br/>'
+    trans.save()
+    purchases = Purchase.objects.filter(transaction=trans)
+    items = []
+    for v in purchases:
+        item = [v.name, v.price, v.amount]
+        items.append(item)
+    data['items'] = items
+    data['total'] = trans.totalpayment()
+    data['orderid'] = "%015d"%orderid
     return data
