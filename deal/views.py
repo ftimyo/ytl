@@ -182,12 +182,16 @@ def SubmitOrderJSON(request):
     theme = MealTheme.objects.all()[:1]
     pickup = ""
     pickuplink = ""
+    taxrate = float(0)
     if theme:
         pickup = theme[0].address
         pickuplink = theme[0].addresslink
         deliveryfee = theme[0].deliveryfee
         desc = theme[0].deliverydesc
+        taxrate = theme[0].taxrate
 
+    if taxrate != 0:
+        data['taxrate'] = taxrate
     data['deliveryfee'] = deliveryfee
     data['deliverydesc'] = desc
     data['pickup'] = pickup
@@ -239,18 +243,16 @@ def PlaceOrderJSON(request):
         trans = OrderBook.objects.get(pk=orderid)
     except:
         return {'attack':'訂單確認失敗'}
-    trans.taxrate = taxrate
     mailcom = {'person':name,'contact':contact,'desc':desc}
     if otype == 1:
         trans.deliveryfee = Decimal(str(deliveryfee))
-        mailcom.update({'deliveryfee':'CDN${:5.2f}'.format(deliveryfee)})
+        mailcom.update({'deliveryfee':'CDN${:3.2f}'.format(deliveryfee)})
         mailcom.update({'addr':addr})
         data['deliveryfee'] = deliveryfee
         trans.save()
     trans.person,trans.contact,trans.address,trans.ordertype,trans.status = name,contact,addr,otype,1
     trans.save()
 
-    mailcom.update({'total':'CDN$'+trans.totalpayment()})
     purchases = Purchase.objects.filter(transaction=trans)
     items = []
     for v in purchases:
@@ -258,7 +260,14 @@ def PlaceOrderJSON(request):
         items.append(item)
     data['items'] = items
     mailcom['items'] = items
+    total = float(trans.totalpayment())
+    if taxrate != 0:
+        data['tax'] = 'CDN$'+'{:3.2f}'.format(taxrate*total)
+        mailcom['tax'] = 'CDN$'+'{:3.2f}'.format(taxrate*total)
+    trans.taxrate = taxrate
+    trans.save()
     data['total'] = trans.totalpayment()
+    mailcom.update({'total':'CDN$'+trans.totalpayment()})
     data['orderid'] = "%015d"%orderid
     data['pickup'] = pickup
     data['pickuplink'] = pickuplink

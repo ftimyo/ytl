@@ -213,7 +213,7 @@ class OrderBook(models.Model):
             ret += float(v.price) * v.amount
         ret += float(self.deliveryfee)
         ret *= (1+self.taxrate)
-        return "{:5.2f}".format(ret)
+        return "{:3.2f}".format(ret)
     totalpayment.short_description = "總計(CDN$)"
     totalpayment.allow_tags = True
     def __str__(self):

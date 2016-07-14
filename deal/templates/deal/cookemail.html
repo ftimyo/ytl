@@ -22,13 +22,16 @@ tr:nth-child(even) {
 <body>
 <h2>{%if addr%}送餐訂單{%else%}取餐訂單{%endif%}</h2>
 <table>
-<tr><td>餐品</td><td>單價(CDN$)</td><td>數量</td></tr>
+<tr><td>餐品</td><td style="text-align:right;">單價(CDN$)</td><td style="text-align:right;">數量</td></tr>
 {% for v in items%}
-<tr><td>{{v.0}}</td><td>{{v.1}}</td><td>{{v.2}}</td></tr>
+<tr><td>{{v.0}}</td><td style="text-align:right;">{{v.1}}</td><td style="text-align:right;">{{v.2}}</td></tr>
 {%endfor%}
 </table>
 {%if deliveryfee%}
 <p>送餐費: {{deliveryfee}}</p>
+{%endif%}
+{%if tax%}
+<p>稅金: {{tax}}</p>
 {%endif%}
 <p>總計: {{total}}</p>
 <p>訂餐人: {{person}}</p>

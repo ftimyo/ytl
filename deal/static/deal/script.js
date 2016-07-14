@@ -392,7 +392,7 @@ function ShowCartContent() {
 	var tbl = document.createElement("table");
 	tbl.className = "w3-table";
 	var tbh = document.createElement("thead");
-	tbh.innerHTML = "<tr><th>餐品名稱</th><th>數量</th><th>價格(CDN$)</th><th class='w3-right'>移除</th></tr>";
+	tbh.innerHTML = "<tr><th>餐品名稱</th><th>數量</th><th style='text-align:right;'>價格(CDN$)</th><th class='w3-right'>移除</th></tr>";
 	tbl.appendChild(tbh);
 	var tblb = document.createElement("tbody");
 	tblb.style = "font-size:20px;"
@@ -403,7 +403,7 @@ function ShowCartContent() {
 		row.name = k;
 		row.innerHTML = "<td>"+items[k][0]+
 			"</td><td><a class='mc'><span class='fa fa-minus-circle'/></a><span style='padding-left:5px;padding-right:5px;' class='cnt'>"+
-			items[k][2]+"</span><a class='pc'><span class='fa fa-plus-circle'/></a></td><td>"+
+			items[k][2]+"</span><a class='pc'><span class='fa fa-plus-circle'/></a></td><td style='text-align:right;'>"+
 			(items[k][1]*items[k][2]).toFixed(2)+"</td>";
 		row.getElementsByClassName("pc")[0].addEventListener('click',(function(td){return function(){PlusItem(td);}})(row),false);
 		row.getElementsByClassName("mc")[0].addEventListener('click',(function(td){return function(){MinusItem(td);}})(row),false);
@@ -431,16 +431,19 @@ function OrderConfirmation(data) {
 	$(document).prop('title', oldtitle+data['orderid']);
 	var tbl = document.createElement('table');tbl.className ='w3-table w3-large';
 	pane.appendChild(sheet);sheet.appendChild(tbl);var items = data['items'];
-	tbl.innerHTML += '<tr><th>餐品</th><th>單價(CDN$)</th><th class="w3-right">數量</th></tr>'
+	tbl.innerHTML += '<tr><th>餐品</th><th style="text-align:right;">單價(CDN$)</th><th class="w3-right">數量</th></tr>'
 	for (var i in items) {
 		var tr = document.createElement('tr');item = items[i];
-		tr.innerHTML = '<td>'+item[0]+'</td><td>'+item[1]+'</td><td class="w3-right">&times;'+item[2]+'</td>';
+		tr.innerHTML = '<td>'+item[0]+'</td><td style="text-align:right;">'+parseFloat(item[1]).toFixed(2)+'</td><td class="w3-right">&times;'+item[2]+'</td>';
 		tbl.appendChild(tr);
 	}
 	sheet.innerHTML += '<hr/>';var tbl2 = document.createElement('table');tbl2.className = 'w3-table w3-large';
 	sheet.appendChild(tbl2);
 	if (parseInt(data['otype'])==1){
-		tbl2.innerHTML = '<tr><td><em>送餐費</em></td><td class="w3-right"><em>'+data['deliveryfee']+'</em></td></tr>';
+		tbl2.innerHTML = '<tr><td><strong>送餐費</strong></td><td class="w3-right"><strong>CDN$'+parseFloat(data['deliveryfee']).toFixed(2)+'</strong></td></tr>';
+	}
+	if (data['tax']) {
+		tbl2.innerHTML += '<tr><td><strong>稅金</strong></td><td class="w3-right"><strong>'+data['tax']+'</strong></td></tr>';
 	}
 	tbl2.innerHTML += '<tr><td><strong>總計</strong></td><td class="w3-right"><strong>CDN$'+data['total']+'</strong></td></tr>';
 	sheet.innerHTML += '<hr/>';tbl3 = document.createElement('table');tbl3.className = 'w3-table w3-large';
@@ -485,6 +488,10 @@ function PlaceOrder(ioid,iot,iname,iaddr,icontact,idesc) {
 	ajaxPost(url,data,function(content){OrderConfirmation(content);});
 }
 function PostSubmitOrder(items, url) {
+	var taxrate = 0;
+	if (items['taxrate']) {
+		taxrate = parseFloat(items['taxrate']);
+	}
 	var orderid = items['orderid'];
 	var sopt = items['sopt']; var topt = items['topt'];var total = parseFloat(items['total']);
 	var deliveryfee = parseFloat(items['deliveryfee']);var deliverydesc = items['deliverydesc'];
@@ -510,11 +517,12 @@ function PostSubmitOrder(items, url) {
 		tr.innerHTML += '<td class="w3-right">CDN$' +(parseFloat(v[2])*parseFloat(v[1])).toFixed(2) + '</td>';
 		tbl.appendChild(tr);
 	}
-	var trt = document.createElement('tr');var trd = document.createElement('tr');trt.className = 'w3-animate-zoom';
-	trd.className = 'w3-animate-zoom';
-	trt.innerHTML = '<td><strong>總計</strong></td><td class="w3-right"><strong>CDN$<span id="totalf">'+total.toFixed(2)+'</span></strong></td>';
-	trd.innerHTML = '<td><em>送餐費</em></td><td class="w3-right"><em>CDN$'+deliveryfee.toFixed(2)+'</em></td>';
-	trd.style.display = 'none';tbl.appendChild(trd); tbl.appendChild(trt);
+	var trx = document.createElement('tr');var trt = document.createElement('tr');var trd = document.createElement('tr');
+	trx.className='w3-animate-zoom';trt.className = 'w3-animate-zoom'; trd.className = 'w3-animate-zoom';
+	trx.innerHTML = '<td><strong>稅金</strong></td><td class="w3-right"><strong>CDN$<span id="taxf">'+(total*taxrate).toFixed(2)+'</span></strong></td>';
+	trt.innerHTML = '<td><strong>總計</strong></td><td class="w3-right"><strong>CDN$<span id="totalf">'+(total*(1+taxrate)).toFixed(2)+'</span></strong></td>';
+	trd.innerHTML = '<td><strong>送餐費</strong></td><td class="w3-right"><strong>CDN$'+deliveryfee.toFixed(2)+'</strong></td>';
+	trd.style.display = 'none';tbl.appendChild(trd);if (taxrate !=0) { tbl.appendChild(trx); } tbl.appendChild(trt);
 	var fd2 = document.createElement('h2');fd2.className = 'w3-padding';fd2.innerHTML = '訂餐人信息';
 	pane.appendChild(fd2);
 	var form = document.createElement('form');
@@ -562,9 +570,12 @@ function PostSubmitOrder(items, url) {
 	icontactp.appendChild(icontact); form.appendChild(icontactp);
 	iot.onchange = (function(obj1,obj2,obj3,obj4,obj5){return function(){
 		if(obj1.value == topt[0][0]){obj2.style.display='none';obj5.style.display='none';obj3.style.display='block';
-			obj4.style.display='none';document.getElementById('totalf').innerHTML=total.toFixed(2);}
-		else{obj2.style.display='block';obj5.style.display='block';obj3.style.display='none';
-			obj4.style.display='table-row';document.getElementById('totalf').innerHTML=(total+deliveryfee).toFixed(2);}
+			obj4.style.display='none';document.getElementById('totalf').innerHTML=(total*(1+taxrate)).toFixed(2);
+			document.getElementById('taxf').innerHTML=(total*taxrate).toFixed(2);
+		}else{obj2.style.display='block';obj5.style.display='block';obj3.style.display='none';
+			obj4.style.display='table-row';document.getElementById('totalf').innerHTML=((total+deliveryfee)*(1+taxrate)).toFixed(2);
+			document.getElementById('taxf').innerHTML=((total+deliveryfee)*taxrate).toFixed(2);
+		}
 	};})(iot,iaddrp,iotl2,trd,iotl);
 	var idescp = document.createElement('p');idescp.className = "w3-animate-zoom";
 	var idesc = document.createElement('input');
