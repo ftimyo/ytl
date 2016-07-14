@@ -10,6 +10,7 @@ from django.core.urlresolvers import reverse
 from django_ajax.decorators import ajax
 from decimal import *
 from django.core.mail import send_mail
+from django.template import loader
 
 # Create your views here.
 
@@ -224,28 +225,55 @@ def PlaceOrderJSON(request):
     except:
         return {'attack':'訂單確認失敗'}
     trans.taxrate = taxrate
+    mailcom = {'person':name,'contact':contact,'desc':desc}
     if otype == 1:
         trans.deliveryfee = Decimal(str(deliveryfee))
-        trans.desc += '<em>送餐費</em> ------------- CDN${:5.2f}'.format(deliveryfee)+'<br/>'
+        mailcom.update({'deliveryfee':'CDN${:5.2f}'.format(deliveryfee)})
+        mailcom.update({'addr':addr})
         data['deliveryfee'] = deliveryfee
         trans.save()
-    trans.desc += '<strong>總計</strong> ------------- CDN$'+trans.totalpayment()+'<br/>'
     trans.person,trans.contact,trans.address,trans.ordertype,trans.status = name,contact,addr,otype,1
-    if desc != "":
-        trans.desc += '備註:<br/>' + desc + '<br/>'
     trans.save()
+
+    mailcom.update({'total':'CDN$'+trans.totalpayment()})
     purchases = Purchase.objects.filter(transaction=trans)
     items = []
     for v in purchases:
         item = [v.name, v.price, v.amount]
         items.append(item)
     data['items'] = items
+    mailcom['items'] = items
     data['total'] = trans.totalpayment()
     data['orderid'] = "%015d"%orderid
+    mailcom['orderid'] = data['orderid']
+    link = []
+    for i in range(2,len(soptionst)):
+        link.append(request.build_absolute_uri(reverse('deal:oproc',args=[str(orderid),str(i)])))
+    mailcom['statuso'] = list(zip(link,soptionst[2:]))
+    mailcom['statusr'] = request.build_absolute_uri(reverse('deal:oproc',args=[str(orderid),str(len(soptionst))]))
+
+    mkmessage = loader.render_to_string('deal/cookemail.html',mailcom)
     if email:
-        send_mail(subject='New Order '+ data['orderid'],
-                message = trans.desc,
+        send_mail(subject='新的訂單 '+ data['orderid'],
+                message=mkmessage,
+                from_email="",
                 recipient_list=[email,],
-                html_message=trans.desc,
+                html_message=mkmessage,
                 fail_silently=False,)
     return data
+def ProcOrder(request,orderid,status):
+    try:
+        orderid, status = int(orderid), int(status)
+        trans = OrderBook.objects.get(pk=orderid)
+    except:
+        return HttpResponse(status=404)
+    if status < 2 or status >len(soptionst):
+        return HttpResponse(status=404)
+    if status == len(soptionst):
+        ret = '<html><body><h1 style="font-size:88px;">訂單%015d'%orderid+'<br/>當前狀態為:<br/>『'+soptionst[trans.status]+'』</h1></body></html>'
+        return HttpResponse(ret)
+
+    trans.status = status
+    trans.save()
+    ret = '<html><body><h1 style="font-size:88px;">訂單%015d'%orderid+'<br/>狀態已更新為:<br/>『'+soptionst[status]+'』</h1></body></html>'
+    return HttpResponse(ret)

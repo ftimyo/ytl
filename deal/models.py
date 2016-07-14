@@ -10,7 +10,7 @@ import os
 
 css_themes = ['cerulean','cosmo','cyborg','darkly','flatly','journal','lumen','paper','readable',
     'sandstone','simplex','slate','spacelab','superhero','united','yeti']
-soptionst = ['等待確認','等待處理','處理中','完成']
+soptionst = ['等待確認','等待處理','正在處理餐品','餐品處理完成','正在運輸餐品','餐品交易完成','異常交易狀態']
 typeoptionst = ['自行取餐','送餐服務']
 def rename_wechatID(instance, filename):
     h = instance.md5sum

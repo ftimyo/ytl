@@ -77,8 +77,9 @@ function NewContentObjects(dishes, anima, catn, catd, reloadcat) {
 		var img = document.createElement("img");
 		img.src = dishes[i].photoid;
 		img.alt = dishes[i].zhtitle;
-		img.className = "w3-hover-opacity";
-		img.style = "width:100%;cursor:pointer";
+		img.className = "w3-hover-opacity w3-center";
+		img.style.width = "100%";
+		img.style.cursor = "pointer";
 		img.onclick = (function(link){return function(){window.open(link);}})(dishes[i].detail);
 		var text = document.createElement("div");
 		text.className = "w3-container";
@@ -104,7 +105,7 @@ function NewContentObjects(dishes, anima, catn, catd, reloadcat) {
 			orderit = document.createElement("button");
 			orderit.type = "button";
 			orderit.className = "btn btn-default";
-			orderit.style = "width:100%";
+			orderit.style.width='100%';
 			orderit.innerHTML = "加入訂餐車";
 			orderit.onclick = AddItemFromMenu;
 			text.appendChild(orderit);
@@ -129,8 +130,9 @@ function ShowIndexContent(recommend, anima) {
 
 		img.src = recommend[i].photoid;
 		img.alt = recommend[i].zhtitle;
-		img.className = "w3-hover-opacity";
-		img.style = "width:100%;cursor:pointer";
+		img.className = "w3-hover-opacity w3-center";
+		img.style.cursor="pointer";
+		img.style.width = "100%";
 		img.onclick = (function(link){return function(){window.open(link);}})(recommend[i].detail);
 
 		var text = document.createElement("div");
@@ -168,7 +170,7 @@ function ShowIndexContent(recommend, anima) {
 			orderit = document.createElement("button");
 			orderit.type = "button";
 			orderit.className = "btn btn-default";
-			orderit.style = "width:100%";
+			orderit.style.width='100%';
 			orderit.innerHTML = "加入訂餐車";
 			orderit.onclick = AddItemFromMenu;
 			text.appendChild(orderit);
@@ -243,7 +245,8 @@ function LoadGalleryContent(photos) {
 		var img = document.createElement("img");
 		img.src = photos[i].image;
 		img.alt = photos[i].name;
-		img.style = "width:100%;cursor:zoom-in";
+		img.style.width = "100%";
+		img.style.cursor = "zoom-in";
 		img.onclick = ShowImageModel;
 		img.className="w3-hover-opacity";
 		card.appendChild(img);
@@ -428,10 +431,10 @@ function OrderConfirmation(data) {
 	$(document).prop('title', oldtitle+data['orderid']);
 	var tbl = document.createElement('table');tbl.className ='w3-table w3-large';
 	pane.appendChild(sheet);sheet.appendChild(tbl);var items = data['items'];
-	tbl.innerHTML += '<tr><th>餐品</th><th>數量</th><th class="w3-right">單價(CDN$)</th></tr>'
+	tbl.innerHTML += '<tr><th>餐品</th><th>單價(CDN$)</th><th class="w3-right">數量</th></tr>'
 	for (var i in items) {
 		var tr = document.createElement('tr');item = items[i];
-		tr.innerHTML = '<td>'+item[0]+'</td><td>&times;'+item[2]+'</td><td class="w3-right">'+item[1]+'</td>';
+		tr.innerHTML = '<td>'+item[0]+'</td><td>'+item[1]+'</td><td class="w3-right">&times;'+item[2]+'</td>';
 		tbl.appendChild(tr);
 	}
 	sheet.innerHTML += '<hr/>';var tbl2 = document.createElement('table');tbl2.className = 'w3-table w3-large';
@@ -524,7 +527,7 @@ function PostSubmitOrder(items, url) {
 	iotp.appendChild(iotl); iotp.appendChild(iot); form.appendChild(iotp);
 	var inamep = document.createElement('p'); inamep.className = "w3-animate-zoom";
 	var iname = document.createElement('input');iname.required = true;
-	iname.id = 'iname';iname.placeholder = '訂餐人姓名';iname.type = 'text';iname.style = 'width:100%';
+	iname.id = 'iname';iname.placeholder = '訂餐人姓名';iname.type = 'text';iname.style.width = '100%';
 	iname.className = "w3-input w3-padding";iname.maxlength="100";
 	iname.onchange = (function(obj){return function(){
 		if (obj.value != "") {
@@ -532,7 +535,7 @@ function PostSubmitOrder(items, url) {
 	inamep.appendChild(iname); form.appendChild(inamep);
 	var iaddrp = document.createElement('p');iaddrp.style.display = 'none';iaddrp.className = "w3-animate-zoom";
 	var iaddr = document.createElement('input');
-	iaddr.id = 'iaddr';iaddr.placeholder = '送餐地址';iaddr.type = 'text';iaddr.style = 'width:100%;';
+	iaddr.id = 'iaddr';iaddr.placeholder = '送餐地址';iaddr.type = 'text';iaddr.style.width = '100%';
 	iaddr.className = "w3-input w3-padding";iaddr.maxlength="128";
 	iaddr.onchange = (function(obj){return function(){
 		if (obj.value != "") {
@@ -541,7 +544,7 @@ function PostSubmitOrder(items, url) {
 	var icontactp = document.createElement('p');icontactp.className = "w3-animate-zoom";
 	var icontact = document.createElement('input');
 	icontact.id = 'icontact';icontact.placeholder = '訂餐人聯繫方式';icontact.required=true;
-	icontact.type = 'text';icontact.style = 'width:100%;';
+	icontact.type = 'text';icontact.style.width = '100%';
 	icontact.className = "w3-input w3-padding"; 
 	icontact.onchange = (function(obj){return function(){
 		if (obj.value != "") {
@@ -556,7 +559,7 @@ function PostSubmitOrder(items, url) {
 	var idescp = document.createElement('p');idescp.className = "w3-animate-zoom";
 	var idesc = document.createElement('input');
 	idesc.id = 'idesc';idesc.placeholder = '備註';
-	idesc.type = 'text';idesc.style = 'width:100%;';
+	idesc.type = 'text';idesc.style.width = '100%';
 	idesc.className = "w3-input w3-padding";idesc.maxlength="128";
 	idescp.appendChild(idesc); form.appendChild(idescp);
 	var containb = document.createElement('div');containb.className = "w3-center w3-padding";
