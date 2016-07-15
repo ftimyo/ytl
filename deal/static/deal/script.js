@@ -464,6 +464,14 @@ function OrderConfirmation(data) {
 			tbl4.innerHTML = '<tr><td class="w3-left"><strong>取餐地址</strong></td></tr><tr><td class="w3-left"><a href="'+data['pickuplink']+'" target="_blank"><strong>'+data['pickup']+'</strong></a></td></tr>';
 		}
 	}
+	if (data['warning']) {
+		var warning = document.createElement("p");warning.innerHTML = data['warning'];
+		sheet.innerHTML += '<hr/>';sheet.appendChild(warning);
+	}
+	if (data['fullsuccess']) {
+		var success = document.createElement("p");success.innerHTML = data['fullsuccess'];
+		sheet.innerHTML += '<hr/>';sheet.appendChild(success);
+	}
 	var btn = document.createElement('input');btn.className = "btn btn-default";btn.value = "打印訂單";
 	sheet.innerHTML += '<hr/>'; sheet.appendChild(btn);
 	btn.onclick = (function(x){return function(){
@@ -473,7 +481,7 @@ function OrderConfirmation(data) {
 		x.style.display=old}})(btn);
 }
 
-function PlaceOrder(ioid,iot,iname,iaddr,icontact,idesc) {
+function PlaceOrder(ioid,iot,iname,iaddr,icontact,idesc,iemail) {
 	//check validity of the input
 	var again = false;
 	if (iname.value == ""){again = true;iname.parentNode.className='w3-border w3-border-red';}
@@ -483,6 +491,7 @@ function PlaceOrder(ioid,iot,iname,iaddr,icontact,idesc) {
 	var url = window.purlsafe;
 	if (url == "") {window.alert("網頁未能正常載入!");}
 	var data = {};
+	data['uemail'] = iemail.value
 	data['otype'] = iot.value;data['name'] = iname.value;data['addr']=iaddr.value;
 	data['contact']=icontact.value;data['desc']=idesc.value;data['orderid']=ioid;
 	ajaxPost(url,data,function(content){OrderConfirmation(content);});
@@ -583,13 +592,19 @@ function PostSubmitOrder(items, url) {
 	idesc.type = 'text';idesc.style.width = '100%';
 	idesc.className = "w3-input w3-padding";idesc.maxlength="128";
 	idescp.appendChild(idesc); form.appendChild(idescp);
+	var iemailp = document.createElement('p');iemailp.className = "w3-animate-zoom";
+	var iemail = document.createElement('input');
+	iemail.id = 'iemail';iemail.placeholder = '電郵地址(可用於跟蹤訂單)';
+	iemail.type = 'text';iemail.style.width = '100%';
+	iemail.className = "w3-input w3-padding";iemail.maxlength="128";
+	iemailp.appendChild(iemail); form.appendChild(iemailp);
 	var containb = document.createElement('div');containb.className = "w3-center w3-padding";
 	containb.innerHTML = "<br/>"; pane.appendChild(containb);
 	var submitb = document.createElement('button');submitb.type='submit';submitb.form = 'orderform';
 	submitb.className = "btn btn-default";submitb.innerHTML = "確認訂單";
 	containb.appendChild(submitb);
-	submitb.onclick = (function(obj0,obj1,obj2,obj3,obj4,obj5){return function(){
-		PlaceOrder(obj0,obj1,obj2,obj3,obj4,obj5);};})(orderid,iot,iname,iaddr,icontact,idesc);
+	submitb.onclick = (function(obj0,obj1,obj2,obj3,obj4,obj5,obj6){return function(){
+		PlaceOrder(obj0,obj1,obj2,obj3,obj4,obj5,obj6);};})(orderid,iot,iname,iaddr,icontact,idesc,iemail);
 }
 function SubmitOrder(url) {
 	var cart = GetCookie('cart');

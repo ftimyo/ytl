@@ -234,7 +234,7 @@ def PlaceOrderJSON(request):
         pickuplink = theme[0].addresslink
         taxrate = theme[0].taxrate
 
-    name, contact, desc, addr = data['name'], data['contact'], data['desc'],data['addr']
+    name, contact, desc, addr, uemail = data['name'].strip(),data['contact'].strip(),data['desc'].strip(),data['addr'].strip(),data['uemail'].strip()
     if name == "" or contact == "":
         return {'attack': '訂餐人信息缺失'}
     if otype == 1 and addr == "":
@@ -277,8 +277,23 @@ def PlaceOrderJSON(request):
         link.append(request.build_absolute_uri(reverse('deal:oproc',args=[str(orderid),str(i)])))
     mailcom['statuso'] = list(zip(link,soptionst[2:]))
     mailcom['statusr'] = request.build_absolute_uri(reverse('deal:oproc',args=[str(orderid),str(len(soptionst))]))
-
     mkmessage = loader.render_to_string('deal/cookemail.html',mailcom)
+    if uemail:
+        umailcom = mailcom
+        umailcom['statusr'] = request.build_absolute_uri(reverse('deal:uoretr',args=[str(orderid),]))
+        if pickup and pickuplink:
+            umailcom['pickup'],umailcom['pickuplink'] = pickup,pickuplink
+        umkmessage = loader.render_to_string('deal/customeremail.html',umailcom)
+        try:
+            send_mail(subject='訂單 '+ data['orderid'],
+                    message=umkmessage,
+                    from_email="",
+                    recipient_list= [uemail,],
+                    html_message=umkmessage,
+                    fail_silently=False,)
+            data['fullsuccess'] = '訂單確認郵件已發送至 "' + uemail + '"'
+        except:
+            data['warning'] = '電郵地址"'+uemail+'"錯誤 --- 訂單確認郵件發送失敗';
     if len(email) != 0:
         send_mail(subject='新的訂單 '+ data['orderid'],
                 message=mkmessage,
@@ -302,4 +317,13 @@ def ProcOrder(request,orderid,status):
     trans.status = status
     trans.save()
     ret = '<html><body><h1 style="font-size:88px;">訂單%015d'%orderid+'<br/>狀態已更新為:<br/>『'+soptionst[status]+'』</h1></body></html>'
+    return HttpResponse(ret)
+
+def RetrieveOrder(request,orderid):
+    try:
+        orderid = int(orderid)
+        trans = OrderBook.objects.get(pk=orderid)
+    except:
+        return HttpResponse(status=404)
+    ret = '<html><body><h1 style="font-size:88px;">訂單%015d'%orderid+'<br/>當前狀態為:<br/>『'+soptionst[trans.status]+'』</h1></body></html>'
     return HttpResponse(ret)

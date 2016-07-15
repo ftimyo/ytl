@@ -13,5 +13,6 @@ urlpatterns = [
     url(r'^contact$',views.ContactPage, name='contact'), #PAGE
     url(r'^submitorder',views.SubmitOrderJSON, name='submit'), #AJAX
     url(r'^orderconfirm',views.PlaceOrderJSON, name='placeorder'), #AJAX
-    url(r'^proco/(?P<orderid>[0-9]+)/(?P<status>[0-9]+)/$',views.ProcOrder, name="oproc") #Text
+    url(r'^proco/(?P<orderid>[0-9]+)/(?P<status>[0-9]+)/$',views.ProcOrder, name="oproc"), #Text
+    url(r'^ro/(?P<orderid>[0-9]+)/$',views.RetrieveOrder, name="uoretr"), #Text
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

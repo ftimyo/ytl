@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+</style>
+</head>
+<body>
+<h2>{%if addr%}送餐訂單{%else%}取餐訂單{%endif%}</h2>
+{%if pickup and pickuplink and not addr%}
+<p>取餐地址: <a href="{{pickuplink}}">{{pickup}}</a></p>
+{%endif%}
+<table>
+<tr><td>餐品</td><td style="text-align:right;">單價(CDN$)</td><td style="text-align:right;">數量</td></tr>
+{% for v in items%}
+<tr><td>{{v.0}}</td><td style="text-align:right;">{{v.1}}</td><td style="text-align:right;">{{v.2}}</td></tr>
+{%endfor%}
+</table>
+{%if deliveryfee%}
+<p>送餐費: {{deliveryfee}}</p>
+{%endif%}
+{%if tax%}
+<p>稅金: {{tax}}</p>
+{%endif%}
+<p>總計: {{total}}</p>
+<p>訂餐人: {{person}}</p>
+<p>訂餐人聯繫方式: {{contact}}</p>
+{%if addr %}
+<p>送餐地址: {{addr}}</p>
+{%endif%}
+{%if desc %}
+<p>備註: {{desc}}</p>
+{%endif%}
+<h4>查詢訂單狀態</h4>
+<ul style="list-style-type:none;margin:0;padding:0;overflow:hidden;background-color:red;">
+<li style="float:left;">
+<a style="display:block;color:white;text-align:center;padding:16px;text-decoration:none;"
+href="{{statusr}}">查詢訂單狀態</a>
+</li>
+</body>
+</html>
